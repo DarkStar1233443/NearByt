@@ -2,15 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- CRITICAL: viewport-fit=cover forces the app to fill the entire physical screen -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
     <!-- iOS Home Screen / PWA Configuration -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="NearByt">
+    <meta name="theme-color" content="#0F172A">
     
-    <!-- Points directly to your GitHub repo image -->
     <link rel="apple-touch-icon" href="nearbyt1.png">
     <link rel="icon" type="image/png" href="nearbyt1.png">
     
@@ -39,7 +38,7 @@
             height: 100%;
             height: 100dvh; 
             overflow: hidden;
-            background-color: var(--primary); 
+            background-color: var(--surface); 
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -57,37 +56,13 @@
         .edit-mode .delete-btn { display: block !important; }
 
         /* --- LAYOUT STRUCTURE --- */
-        #app-wrapper { 
-            background-color: var(--bg-color); 
-            display: flex; 
-            flex-direction: row; 
-            height: 100%; 
-            width: 100%; 
-            overflow: hidden;
-        }
-
-        #main-container { 
-            flex: 1; 
-            display: flex; 
-            flex-direction: column; 
-            position: relative; 
-            height: 100%; 
-            overflow: hidden;
-        }
+        #app-wrapper { background-color: var(--bg-color); display: flex; flex-direction: row; height: 100%; width: 100%; overflow: hidden; }
+        #main-container { flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden; }
 
         /* SIDEBAR (LAPTOP ONLY) */
         #sidebar {
-            display: none; 
-            width: var(--sidebar-width); 
-            background-color: var(--primary); 
-            color: white; 
-            flex-direction: column; 
-            padding-bottom: 20px; 
-            box-shadow: 2px 0 15px rgba(0,0,0,0.15); 
-            z-index: 20;
-            padding-top: max(20px, env(safe-area-inset-top)); 
-            height: 100%;
-            overflow-y: auto;
+            display: none; width: var(--sidebar-width); background-color: var(--primary); color: white; flex-direction: column; padding-bottom: 20px; box-shadow: 2px 0 15px rgba(0,0,0,0.15); z-index: 20;
+            padding-top: max(20px, env(safe-area-inset-top)); height: 100%; overflow-y: auto;
         }
         .sidebar-logo { font-size: 2rem; font-weight: 800; padding: 10px 25px 30px; letter-spacing: -0.5px; cursor: pointer; user-select: none; }
         .sidebar-logo span { color: var(--logo-accent); }
@@ -97,22 +72,11 @@
 
         /* HEADER */
         header {
-            background-color: var(--primary); 
-            color: white; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            z-index: 10;
-            flex-shrink: 0;
-            padding-top: calc(15px + env(safe-area-inset-top)); 
-            padding-bottom: 15px; 
-            padding-left: 20px; 
-            padding-right: 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            background-color: var(--primary); color: white; display: flex; justify-content: space-between; align-items: center; z-index: 10; flex-shrink: 0;
+            padding-top: max(15px, env(safe-area-inset-top)); padding-bottom: 15px; padding-left: 20px; padding-right: 20px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
         .mobile-logo { font-size: 1.8rem; font-weight: 800; cursor: pointer; user-select: none; letter-spacing: -0.5px; }
         .mobile-logo span { color: var(--logo-accent); }
-        
         .header-actions { display: flex; align-items: center; gap: 15px; width: 100%; justify-content: space-between; }
         .role-switch-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 8px 14px; border-radius: 20px; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 600; transition: 0.3s; }
         .role-switch-btn:hover, .role-switch-btn.business-mode { background: var(--accent-dark); color: white; border-color: var(--accent-dark); }
@@ -120,60 +84,39 @@
 
         /* SCROLLABLE CONTENT */
         #content-area {
-            flex: 1; 
-            overflow-y: auto; 
-            -webkit-overflow-scrolling: touch; 
-            padding: 15px 15px calc(110px + env(safe-area-inset-bottom)) 15px; 
-            background: var(--bg-color); 
-            scroll-behavior: smooth;
+            flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 15px 15px 30px 15px; background: var(--bg-color); scroll-behavior: smooth;
         }
         .view-section { display: none; animation: fadeIn 0.2s ease; }
         .view-section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- PROFESSIONAL UI COMPONENTS --- */
+        /* UI COMPONENTS */
         h2.section-title { font-size: 1.2rem; margin: 25px 0 15px; color: var(--text-dark); font-weight: 800; letter-spacing: -0.3px;}
         .search-bar { width: 100%; padding: 14px 18px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); margin-bottom: 15px; transition: 0.2s; }
         .search-bar:focus-within { border-color: var(--accent-dark); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .search-bar input { border: none; outline: none; width: 100%; font-size: 0.95rem; background: transparent; color: var(--text-dark); }
-
         .grid-layout { display: grid; grid-template-columns: 1fr; gap: 15px; }
-        .card { background: var(--surface); border-radius: 14px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid var(--border); transition: transform 0.2s, box-shadow 0.2s; }
-        
+        .card { background: var(--surface); border-radius: 14px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid var(--border); transition: transform 0.2s, box-shadow 0.2s; position: relative;}
         .tag { font-size: 0.65rem; padding: 5px 8px; border-radius: 6px; font-weight: 800; display: inline-block; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
         .tag-accent { background: rgba(16, 185, 129, 0.1); color: var(--accent-dark); }
         .tag-navy { background: rgba(15, 23, 42, 0.06); color: var(--primary); }
-        
         .btn { background: var(--primary); color: white; border: none; padding: 12px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 0.9rem; text-align: center; }
         .btn-accent { background: var(--accent-dark); color: white; }
         .btn-outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); font-weight: 700; }
         .btn:hover { opacity: 0.9; transform: scale(0.98); }
-
         .card-image-wrap { display: flex; gap: 15px; align-items: stretch; margin-bottom: 15px; }
         .shop-logo { width: 85px; height: 85px; border-radius: 10px; object-fit: cover; border: 1px solid var(--border); flex-shrink: 0; }
-
         .scroll-row { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 5px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
         .scroll-row::-webkit-scrollbar { display: none; }
         .filter-btn { padding: 10px 18px; border-radius: 20px; border: 1px solid var(--border); background: var(--surface); white-space: nowrap; font-size: 0.85rem; font-weight: 600; cursor: pointer; color: var(--text-gray); box-shadow: 0 2px 6px rgba(0,0,0,0.02); transition: 0.2s;}
         .filter-btn:hover, .filter-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
-
-        .product-card { min-width: 140px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); display: flex; flex-direction: column; }
+        .product-card { min-width: 140px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); display: flex; flex-direction: column; position: relative;}
         .product-img { width: 100%; height: 90px; object-fit: cover; border-radius: 8px; margin-bottom: 8px; background: #eee; }
 
-        /* BOTTOM NAVIGATIONS (Absolute Fixed geometry) */
+        /* BOTTOM NAVIGATIONS */
         .bottom-nav-bar {
-            position: fixed; 
-            bottom: 0; left: 0; right: 0; 
-            background: rgba(255, 255, 255, 0.95); 
-            backdrop-filter: blur(10px);
-            display: flex; 
-            justify-content: space-around; 
-            align-items: center; 
-            border-top: 1px solid var(--border); 
-            z-index: 50;
-            padding-top: 12px; 
-            padding-bottom: calc(12px + env(safe-area-inset-bottom)); 
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.03);
+            flex-shrink: 0; width: 100%; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; align-items: center; border-top: 1px solid var(--border); z-index: 50;
+            padding-top: 12px; padding-bottom: max(15px, env(safe-area-inset-bottom)); box-shadow: 0 -5px 20px rgba(0,0,0,0.03);
         }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-gray); font-size: 0.7rem; cursor: pointer; flex: 1; font-weight: 600; }
         .nav-item i { font-size: 1.35rem; margin-bottom: 6px; transition: 0.2s; }
@@ -184,9 +127,8 @@
         #toast { position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%); background: #1E293B; color: white; padding: 14px 28px; border-radius: 30px; font-size: 0.9rem; font-weight: 600; opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 9999; box-shadow: 0 10px 25px rgba(0,0,0,0.2); white-space: nowrap; }
         #toast.show { opacity: 1; }
         
-        /* Utility */
         .tracking-card { border-left: 4px solid var(--accent-dark); background: white; padding: 16px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border); border-left-width: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
-        .payment-option { display: flex; justify-content: space-between; align-items: center; padding: 14px; border: 2px solid var(--border); border-radius: 12px; margin-bottom: 10px; background: white; cursor: pointer; transition: 0.2s; }
+        .payment-option { display: flex; justify-content: space-between; align-items: center; padding: 14px; border: 2px solid var(--border); border-radius: 12px; margin-bottom: 10px; background: white; cursor: pointer; transition: 0.2s; position: relative;}
         .payment-option:hover, .payment-option.selected { border-color: var(--accent-dark); background: rgba(16, 185, 129, 0.03); }
 
         @media (min-width: 768px) {
@@ -202,7 +144,6 @@
 </head>
 <body>
 
-    <!-- HIDDEN FILE UPLOADER FOR IMAGE EDITING -->
     <input type="file" id="imageUploader" accept="image/*" style="display:none;">
 
     <div id="app-wrapper">
@@ -210,8 +151,6 @@
         <!-- DESKTOP SIDEBAR -->
         <div id="sidebar">
             <div class="sidebar-logo" onclick="secretToggle()">Near<span>Byt</span></div>
-            
-            <!-- Customer Links -->
             <div id="desktop-nav-customer">
                 <div class="sidebar-item active" onclick="switchTab('shop')"><i class="fa-solid fa-store"></i> Shop & Discover</div>
                 <div class="sidebar-item" onclick="switchTab('rides')"><i class="fa-solid fa-car"></i> Mobility & Rides</div>
@@ -220,15 +159,13 @@
                 <div class="sidebar-item" onclick="switchTab('cart')"><i class="fa-solid fa-cart-shopping"></i> My Cart</div>
                 <div class="sidebar-item" onclick="switchTab('settings')"><i class="fa-solid fa-gear"></i> Settings</div>
             </div>
-            
-            <!-- Separated Business Links -->
             <div id="desktop-nav-business" style="display: none; margin-top: 10px;">
                 <div style="padding: 0 25px 10px; font-size: 0.75rem; color: var(--accent-dark); text-transform: uppercase; font-weight: 700;">Merchant Tools</div>
                 <div class="sidebar-item active" onclick="switchTab('biz-dash')"><i class="fa-solid fa-chart-line"></i> Dashboard</div>
                 <div class="sidebar-item" onclick="switchTab('biz-orders')"><i class="fa-solid fa-bell"></i> Live Orders</div>
-                <div class="sidebar-item" onclick="switchTab('biz-inventory')"><i class="fa-solid fa-box"></i> Inventory Manager</div>
+                <div class="sidebar-item" onclick="switchTab('biz-inventory')"><i class="fa-solid fa-box"></i> Inventory</div>
                 <div class="sidebar-item" onclick="switchTab('biz-web')"><i class="fa-solid fa-globe"></i> Digital Storefront</div>
-                <div class="sidebar-item" onclick="switchTab('settings')"><i class="fa-solid fa-gear"></i> Account Settings</div>
+                <div class="sidebar-item" onclick="switchTab('settings')"><i class="fa-solid fa-gear"></i> Settings</div>
             </div>
         </div>
 
@@ -252,7 +189,7 @@
             <div id="content-area">
                 
                 <!-- ==========================================
-                     CUSTOMER TAB 1: SHOP & DISCOVER
+                     TAB 1: SHOP & DISCOVER
                      ========================================== -->
                 <div id="view-shop" class="view-section active">
                     <div class="search-bar">
@@ -289,8 +226,8 @@
                     </div>
                     <button class="add-new-btn" onclick="addNewItem('product', 'product-list')">+ Add New Product</button>
 
-                    <h2 class="section-title">Neighborhood Stores & Dining</h2>
-                    <div class="grid-layout" id="store-list" data-save-container="true">
+                    <h2 class="section-title">Restaurants & Dining</h2>
+                    <div class="grid-layout" id="rest-list" data-save-container="true">
                         <div class="card">
                             <div class="card-image-wrap">
                                 <img src="https://images.unsplash.com/photo-1631515243349-e0cb75fb8d3a?auto=format&fit=crop&w=150&q=80" class="shop-logo" data-edit-id="rest1-img">
@@ -304,8 +241,13 @@
                                 <button class="btn" style="flex: 1;" onclick="switchTab('cart'); showToast('Opening Menu...')">View Menu</button>
                                 <button class="btn btn-outline" style="flex: 1;"><i class="fa-solid fa-map-location-dot"></i> Directions</button>
                             </div>
-                            <button class="delete-btn" onclick="this.parentElement.remove(); saveContainer('store-list')">Delete Store</button>
+                            <button class="delete-btn" onclick="this.parentElement.remove(); saveContainer('rest-list')">Delete</button>
                         </div>
+                    </div>
+                    <button class="add-new-btn" onclick="addNewItem('restaurant', 'rest-list')">+ Add New Restaurant</button>
+
+                    <h2 class="section-title">Neighborhood Stores</h2>
+                    <div class="grid-layout" id="store-list" data-save-container="true">
                         <div class="card">
                             <div class="card-image-wrap">
                                 <img src="https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=150&q=80" class="shop-logo" data-edit-id="shop1-img">
@@ -319,14 +261,14 @@
                                 <button class="btn" style="flex: 1;">Shop App</button>
                                 <button class="btn btn-outline" style="flex: 1;">View Website</button>
                             </div>
-                            <button class="delete-btn" onclick="this.parentElement.remove(); saveContainer('store-list')">Delete Store</button>
+                            <button class="delete-btn" onclick="this.parentElement.remove(); saveContainer('store-list')">Delete</button>
                         </div>
                     </div>
                     <button class="add-new-btn" onclick="addNewItem('store', 'store-list')">+ Add New Store</button>
                 </div>
 
                 <!-- ==========================================
-                     CUSTOMER TAB 2: MOBILITY / RIDES
+                     TAB 2: MOBILITY / RIDES
                      ========================================== -->
                 <div id="view-rides" class="view-section">
                     <div class="tracking-card">
@@ -353,29 +295,32 @@
                     </div>
 
                     <h2 class="section-title">Available Rides</h2>
-                    <div class="grid-layout">
+                    <div class="grid-layout" id="ride-list" data-save-container="true">
                         <div class="payment-option selected" style="padding: 16px;" onclick="selectPayment(this)">
                             <div style="display: flex; align-items: center; gap: 15px;">
                                 <div style="width: 50px; height: 50px; background: rgba(15, 23, 42, 0.05); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: var(--primary);">
                                     <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M5.5 16h13a2 2 0 0 0 2-2v-3.5L17 5H7L3.5 10.5V14a2 2 0 0 0 2 2zM7.5 6.5h9l2 3H5.5l2-3z"></path><circle cx="7" cy="17.5" r="2.5"></circle><circle cx="17" cy="17.5" r="2.5"></circle></svg>
                                 </div>
-                                <div><h4 style="font-size: 1.1rem; font-weight:800;">Auto</h4><p style="font-size: 0.8rem; color: var(--text-gray);">4 mins away • 3 seats</p></div>
+                                <div><h4 style="font-size: 1.1rem; font-weight:800;" data-edit-id="ride1-title">Auto</h4><p style="font-size: 0.8rem; color: var(--text-gray);" data-edit-id="ride1-desc">4 mins away • 3 seats</p></div>
                             </div>
-                            <h3 style="margin: 0; color: var(--primary);" data-edit-id="price-auto">₹80</h3>
+                            <h3 style="margin: 0; color: var(--primary);" data-edit-id="ride1-price">₹80</h3>
+                            <button class="delete-btn" onclick="this.parentElement.remove(); saveContainer('ride-list')" style="margin-left: 10px;">Delete</button>
                         </div>
                         <div class="payment-option" style="padding: 16px;" onclick="selectPayment(this)">
                             <div style="display: flex; align-items: center; gap: 15px;">
                                 <div style="width: 50px; height: 50px; background: rgba(15, 23, 42, 0.05); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: var(--primary);"><i class="fa-solid fa-motorcycle" style="font-size:1.5rem;"></i></div>
-                                <div><h4 style="font-size: 1.1rem; font-weight:800;">Bike</h4><p style="font-size: 0.8rem; color: var(--text-gray);">2 mins away • 1 seat</p></div>
+                                <div><h4 style="font-size: 1.1rem; font-weight:800;" data-edit-id="ride2-title">Bike</h4><p style="font-size: 0.8rem; color: var(--text-gray);" data-edit-id="ride2-desc">2 mins away • 1 seat</p></div>
                             </div>
-                            <h3 style="margin: 0; color: var(--primary);" data-edit-id="price-bike">₹45</h3>
+                            <h3 style="margin: 0; color: var(--primary);" data-edit-id="ride2-price">₹45</h3>
+                            <button class="delete-btn" onclick="this.parentElement.remove(); saveContainer('ride-list')" style="margin-left: 10px;">Delete</button>
                         </div>
                     </div>
-                    <button class="btn btn-accent" style="margin-top: 20px; width: 100%; padding: 14px; font-size: 1.05rem;">Book Selected Ride</button>
+                    <button class="add-new-btn" onclick="addNewItem('ride', 'ride-list')">+ Add New Ride Option</button>
+                    <button class="btn btn-accent" style="margin-top: 10px; width: 100%; padding: 14px; font-size: 1.05rem;">Book Selected Ride</button>
                 </div>
 
                 <!-- ==========================================
-                     CUSTOMER TAB 3: SERVICES
+                     TAB 3: SERVICES
                      ========================================== -->
                 <div id="view-services" class="view-section">
                     <div class="scroll-row">
@@ -407,11 +352,11 @@
                 </div>
 
                 <!-- ==========================================
-                     CUSTOMER TAB 4: JOBS
+                     TAB 4: JOBS
                      ========================================== -->
                 <div id="view-jobs" class="view-section">
                     <h2 class="section-title">Hyperlocal Openings</h2>
-                    <div class="grid-layout">
+                    <div class="grid-layout" id="job-list" data-save-container="true">
                         <div class="card">
                             <div class="card-image-wrap" style="margin-bottom: 10px;">
                                 <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=150&q=80" class="shop-logo" data-edit-id="job1-img">
@@ -422,12 +367,14 @@
                             </div>
                             <p style="font-size: 0.85rem; color: var(--text-gray);" data-edit-id="job1-meta"><i class="fa-solid fa-location-dot"></i> 0.2 km away &nbsp;•&nbsp; ₹ 18,000/mo</p>
                             <button class="btn btn-accent" style="margin-top: 15px; width: 100%;">Apply for Job</button>
+                            <button class="delete-btn" onclick="this.parentElement.remove(); saveContainer('job-list')">Delete Job</button>
                         </div>
                     </div>
+                    <button class="add-new-btn" onclick="addNewItem('job', 'job-list')">+ Add New Job</button>
                 </div>
 
                 <!-- ==========================================
-                     CUSTOMER TAB 5: CART & CHECKOUT
+                     TAB 5: CART & CHECKOUT
                      ========================================== -->
                 <div id="view-cart" class="view-section">
                     <h2 class="section-title" style="margin-top: 5px;"><i class="fa-solid fa-cart-shopping"></i> My Cart</h2>
@@ -490,7 +437,7 @@
                 </div>
 
                 <!-- ==========================================
-                     CUSTOMER TAB 6: SETTINGS
+                     TAB 6: SETTINGS
                      ========================================== -->
                 <div id="view-settings" class="view-section">
                     <h2 class="section-title" style="margin-top: 0;">My Account</h2>
@@ -566,7 +513,6 @@
 
                     <div class="card" style="background: white; padding: 20px; text-align: center;">
                         <p style="font-size: 0.85rem; color: var(--text-gray); font-weight: 600; margin-bottom: 15px;">Revenue This Week</p>
-                        <!-- Mock Chart using simple div blocks -->
                         <div style="display: flex; align-items: flex-end; justify-content: space-around; height: 120px; border-bottom: 2px solid var(--border); padding-bottom: 10px; gap: 8px;">
                             <div style="background: rgba(16, 185, 129, 0.4); width: 100%; height: 40%; border-radius: 4px 4px 0 0;"></div>
                             <div style="background: rgba(16, 185, 129, 0.6); width: 100%; height: 60%; border-radius: 4px 4px 0 0;"></div>
@@ -582,9 +528,9 @@
 
                 <!-- BUSINESS TAB 2: LIVE ORDERS -->
                 <div id="view-biz-orders" class="view-section">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;"><h2 style="font-size: 1.2rem; font-weight:800; color: var(--primary); margin:0;"><i class="fa-solid fa-bell"></i> Live Orders</h2> <span class="tag tag-accent" style="margin:0;">2 Pending</span></div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;"><h2 style="font-size: 1.2rem; font-weight:800; color: var(--primary); margin:0;"><i class="fa-solid fa-bell"></i> Live Orders</h2> <span class="tag tag-accent" style="margin:0;">Pending</span></div>
                     
-                    <div id="live-orders-list">
+                    <div id="live-orders-list" data-save-container="true">
                         <div class="card" style="margin-bottom: 15px; border-left: 5px solid var(--accent-dark);">
                             <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
                                 <h4 style="color: var(--primary); font-size: 1.1rem; font-weight: 800;">Order #1042</h4>
@@ -592,8 +538,8 @@
                             </div>
                             <p style="font-size: 0.95rem; font-weight: 500; margin-bottom: 15px; color: var(--text-dark);">2x Fresh Milk 1L, 1x Bread (₹170)</p>
                             <div style="display: flex; gap: 12px;">
-                                <button class="btn btn-accent" style="flex: 2;" onclick="this.parentElement.parentElement.remove(); showToast('Accepted & Packed!')">Accept & Pack</button>
-                                <button class="btn btn-outline" style="flex: 1; color: #ef4444; border-color: #ef4444;" onclick="this.parentElement.parentElement.remove(); showToast('Cancelled.')">Cancel</button>
+                                <button class="btn btn-accent" style="flex: 2;" onclick="this.parentElement.parentElement.remove(); showToast('Accepted & Packed!'); saveContainer('live-orders-list')">Accept & Pack</button>
+                                <button class="btn btn-outline" style="flex: 1; color: #ef4444; border-color: #ef4444;" onclick="this.parentElement.parentElement.remove(); showToast('Cancelled.'); saveContainer('live-orders-list')">Cancel</button>
                             </div>
                         </div>
                         <div class="card" style="margin-bottom: 15px; border-left: 5px solid var(--text-gray);">
@@ -603,11 +549,12 @@
                             </div>
                             <p style="font-size: 0.95rem; font-weight: 500; margin-bottom: 15px; color: var(--text-dark);">1x Detergent Powder 2kg (₹350)</p>
                             <div style="display: flex; gap: 12px;">
-                                <button class="btn btn-accent" style="flex: 2;" onclick="this.parentElement.parentElement.remove(); showToast('Accepted & Packed!')">Accept & Pack</button>
-                                <button class="btn btn-outline" style="flex: 1; color: #ef4444; border-color: #ef4444;" onclick="this.parentElement.parentElement.remove(); showToast('Cancelled.')">Cancel</button>
+                                <button class="btn btn-accent" style="flex: 2;" onclick="this.parentElement.parentElement.remove(); showToast('Accepted & Packed!'); saveContainer('live-orders-list')">Accept & Pack</button>
+                                <button class="btn btn-outline" style="flex: 1; color: #ef4444; border-color: #ef4444;" onclick="this.parentElement.parentElement.remove(); showToast('Cancelled.'); saveContainer('live-orders-list')">Cancel</button>
                             </div>
                         </div>
                     </div>
+                    <button class="add-new-btn" onclick="addNewItem('order', 'live-orders-list')">+ Add Demo Order</button>
                 </div>
 
                 <!-- BUSINESS TAB 3: INVENTORY MANAGER -->
@@ -623,7 +570,7 @@
                             </div>
                             <div style="display: flex; flex-direction: column; gap: 10px; align-items: center;">
                                 <i class="fa-solid fa-pen-to-square" style="cursor:pointer; color: var(--text-gray);" onclick="secretToggle(); showToast('Edit Mode Triggered')"></i>
-                                <i class="fa-solid fa-trash delete-btn" style="color: #ef4444; cursor: pointer; padding:0; margin:0; width:auto; font-size:1.1rem; background:transparent;" onclick="this.parentElement.parentElement.remove(); saveContainer('inv-list')"></i>
+                                <i class="fa-solid fa-trash delete-btn" style="color: #ef4444; cursor: pointer; padding:0; margin:0; width:auto; font-size:1.1rem; background:transparent;" onclick="this.parentElement.remove(); saveContainer('inv-list')"></i>
                             </div>
                         </div>
                         <div style="display: flex; align-items: center; justify-content: space-between; padding: 15px; border-bottom: 1px solid var(--border);">
@@ -634,11 +581,11 @@
                             </div>
                             <div style="display: flex; flex-direction: column; gap: 10px; align-items: center;">
                                 <i class="fa-solid fa-pen-to-square" style="cursor:pointer; color: var(--text-gray);" onclick="secretToggle(); showToast('Edit Mode Triggered')"></i>
-                                <i class="fa-solid fa-trash delete-btn" style="color: #ef4444; cursor: pointer; padding:0; margin:0; width:auto; font-size:1.1rem; background:transparent;" onclick="this.parentElement.parentElement.remove(); saveContainer('inv-list')"></i>
+                                <i class="fa-solid fa-trash delete-btn" style="color: #ef4444; cursor: pointer; padding:0; margin:0; width:auto; font-size:1.1rem; background:transparent;" onclick="this.parentElement.remove(); saveContainer('inv-list')"></i>
                             </div>
                         </div>
                     </div>
-                    <button class="add-new-btn" style="display: block; width: 100%; border: 2px dashed var(--primary); background: transparent; color: var(--primary);" onclick="addNewItem('inv', 'inv-list')">+ Add Product to Inventory</button>
+                    <button class="add-new-btn" onclick="addNewItem('inv', 'inv-list')">+ Add Product to Inventory</button>
                 </div>
 
                 <!-- BUSINESS TAB 4: WEBSITE -->
@@ -777,6 +724,22 @@
                             <button class="btn btn-accent" style="width: 100%; padding: 8px; font-size: 0.8rem; margin-top: 10px;" onclick="showToast('Added!')">Add</button>
                             <button class="delete-btn" onclick="this.parentElement.remove(); saveContainer('${containerId}')">Delete</button>
                         </div>`;
+            } else if (type === 'restaurant') {
+                html = `<div class="card">
+                            <div class="card-image-wrap">
+                                <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=150&q=80" class="shop-logo" data-edit-id="img-${id}">
+                                <div style="flex:1;">
+                                    <span class="tag tag-accent" data-edit-id="tag-${id}">Delivery + Dine-in</span>
+                                    <h3 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 2px;" data-edit-id="title-${id}">New Restaurant</h3>
+                                    <p style="font-size: 0.85rem; color: var(--text-gray);" data-edit-id="desc-${id}">Cuisine • 0.0 km • ★ 5.0</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 12px; width: 100%;">
+                                <button class="btn" style="flex: 1;" onclick="switchTab('cart'); showToast('Opening Menu...')">View Menu</button>
+                                <button class="btn btn-outline" style="flex: 1;"><i class="fa-solid fa-map-location-dot"></i> Directions</button>
+                            </div>
+                            <button class="delete-btn" onclick="this.parentElement.remove(); saveContainer('${containerId}')">Delete</button>
+                        </div>`;
             } else if (type === 'store') {
                 html = `<div class="card">
                             <div class="card-image-wrap">
@@ -791,7 +754,16 @@
                                 <button class="btn" style="flex: 1;">Shop App</button>
                                 <button class="btn btn-outline" style="flex: 1;">View Website</button>
                             </div>
-                            <button class="delete-btn" onclick="this.parentElement.remove(); saveContainer('${containerId}')">Delete Store</button>
+                            <button class="delete-btn" onclick="this.parentElement.remove(); saveContainer('${containerId}')">Delete</button>
+                        </div>`;
+            } else if (type === 'ride') {
+                html = `<div class="payment-option" style="padding: 16px;" onclick="selectPayment(this)">
+                            <div style="display: flex; align-items: center; gap: 15px;">
+                                <div style="width: 50px; height: 50px; background: rgba(15, 23, 42, 0.05); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: var(--primary);"><i class="fa-solid fa-car" style="font-size:1.5rem;"></i></div>
+                                <div><h4 style="font-size: 1.1rem; font-weight:800;" data-edit-id="title-${id}">New Ride Option</h4><p style="font-size: 0.8rem; color: var(--text-gray);" data-edit-id="desc-${id}">0 mins away • 1 seat</p></div>
+                            </div>
+                            <h3 style="margin: 0; color: var(--primary);" data-edit-id="price-${id}">₹0</h3>
+                            <button class="delete-btn" onclick="this.parentElement.remove(); saveContainer('${containerId}')" style="margin-left: 10px;">Delete</button>
                         </div>`;
             } else if (type === 'service') {
                 html = `<div class="card">
@@ -807,7 +779,32 @@
                                 <button class="btn btn-outline" style="flex: 1;"><i class="fa-solid fa-phone"></i> Call</button>
                                 <button class="btn" style="flex: 2;">Book</button>
                             </div>
-                            <button class="delete-btn" onclick="this.parentElement.remove(); saveContainer('${containerId}')">Delete Service</button>
+                            <button class="delete-btn" onclick="this.parentElement.remove(); saveContainer('${containerId}')">Delete</button>
+                        </div>`;
+            } else if (type === 'job') {
+                html = `<div class="card">
+                            <div class="card-image-wrap" style="margin-bottom: 10px;">
+                                <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=150&q=80" class="shop-logo" data-edit-id="img-${id}">
+                                <div>
+                                    <h3 style="color: var(--primary); font-weight: 800;" data-edit-id="title-${id}">New Job Role</h3>
+                                    <p style="font-weight: 600; margin: 3px 0; font-size: 0.9rem;" data-edit-id="desc-${id}">Company Name</p>
+                                </div>
+                            </div>
+                            <p style="font-size: 0.85rem; color: var(--text-gray);" data-edit-id="meta-${id}"><i class="fa-solid fa-location-dot"></i> 0.0 km away &nbsp;•&nbsp; ₹ 0/mo</p>
+                            <button class="btn btn-accent" style="margin-top: 15px; width: 100%;">Apply for Job</button>
+                            <button class="delete-btn" onclick="this.parentElement.remove(); saveContainer('${containerId}')">Delete</button>
+                        </div>`;
+            } else if (type === 'order') {
+                html = `<div class="card" style="margin-bottom: 15px; border-left: 5px solid var(--accent-dark);">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                                <h4 style="color: var(--primary); font-size: 1.1rem; font-weight: 800;" data-edit-id="order-title-${id}">Order #${Math.floor(Math.random()*10000)}</h4>
+                                <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-gray);" data-edit-id="order-tag-${id}">New Order</span>
+                            </div>
+                            <p style="font-size: 0.95rem; font-weight: 500; margin-bottom: 15px; color: var(--text-dark);" data-edit-id="order-desc-${id}">1x Custom Item (₹0)</p>
+                            <div style="display: flex; gap: 12px;">
+                                <button class="btn btn-accent" style="flex: 2;" onclick="this.parentElement.parentElement.remove(); showToast('Accepted & Packed!'); saveContainer('${containerId}')">Accept & Pack</button>
+                                <button class="btn btn-outline" style="flex: 1; color: #ef4444; border-color: #ef4444;" onclick="this.parentElement.parentElement.remove(); showToast('Cancelled.'); saveContainer('${containerId}')">Cancel</button>
+                            </div>
                         </div>`;
             } else if (type === 'inv') {
                 html = `<div style="display: flex; align-items: center; justify-content: space-between; padding: 15px; border-bottom: 1px solid var(--border);">
@@ -936,10 +933,7 @@
             
             const v = document.getElementById('view-' + tabId); if(v) v.classList.add('active');
             
-            // Highlight mobile nav items matching target
             document.querySelectorAll(`.nav-item[data-target="${tabId}"]`).forEach(m => m.classList.add('active'));
-            
-            // Highlight desktop nav items matching onclick string
             document.querySelectorAll('.sidebar-item').forEach(item => {
                 if (item.getAttribute('onclick') && item.getAttribute('onclick').includes(tabId)) { item.classList.add('active'); }
             });
@@ -947,7 +941,6 @@
             document.getElementById('content-area').scrollTop = 0;
         }
 
-        // Checkout Payment Selector
         function selectPaymentMode(element) {
             document.querySelectorAll('.payment-option').forEach(opt => {
                 opt.classList.remove('selected');

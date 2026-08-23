@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <!-- CRITICAL: viewport-fit=cover forces the app to fill the entire physical screen -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
     <!-- iOS Home Screen / PWA Configuration -->
@@ -10,6 +11,7 @@
     <meta name="apple-mobile-web-app-title" content="NearByt">
     <meta name="theme-color" content="#0F172A">
     
+    <!-- Points directly to your GitHub repo image -->
     <link rel="apple-touch-icon" href="nearbyt1.png">
     <link rel="icon" type="image/png" href="nearbyt1.png">
     
@@ -38,7 +40,7 @@
             height: 100%;
             height: 100dvh; 
             overflow: hidden;
-            background-color: var(--surface); 
+            background-color: var(--primary); 
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -57,7 +59,7 @@
 
         /* --- LAYOUT STRUCTURE --- */
         #app-wrapper { background-color: var(--bg-color); display: flex; flex-direction: row; height: 100%; width: 100%; overflow: hidden; }
-        #main-container { flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden; }
+        #main-container { flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden; position: relative; }
 
         /* SIDEBAR (LAPTOP ONLY) */
         #sidebar {
@@ -66,26 +68,31 @@
         }
         .sidebar-logo { font-size: 2rem; font-weight: 800; padding: 10px 25px 30px; letter-spacing: -0.5px; cursor: pointer; user-select: none; }
         .sidebar-logo span { color: var(--logo-accent); }
-        .sidebar-item { padding: 15px 25px; display: flex; align-items: center; gap: 15px; color: #94A3B8; cursor: pointer; transition: 0.2s; font-weight: 600; font-size: 0.95rem; }
+        .sidebar-item { padding: 15px 25px; display: flex; align-items: center; gap: 15px; color: #94A3B8; cursor: pointer; transition: 0.2s; font-weight: 600; font-size: 0.95rem; border-radius: 0 25px 25px 0; margin-right: 20px; }
         .sidebar-item:hover { color: white; background: rgba(255,255,255,0.05); }
-        .sidebar-item.active { color: var(--primary); background: var(--logo-accent); border-radius: 0 25px 25px 0; margin-right: 20px; }
+        .sidebar-item.active { color: var(--primary); background: var(--logo-accent); }
 
         /* HEADER */
         header {
             background-color: var(--primary); color: white; display: flex; justify-content: space-between; align-items: center; z-index: 10; flex-shrink: 0;
-            padding-top: max(15px, env(safe-area-inset-top)); padding-bottom: 15px; padding-left: 20px; padding-right: 20px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding-top: max(12px, env(safe-area-inset-top)); padding-bottom: 12px; padding-left: 20px; padding-right: 20px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
         }
-        .mobile-logo { font-size: 1.8rem; font-weight: 800; cursor: pointer; user-select: none; letter-spacing: -0.5px; }
+        .mobile-logo { font-size: 1.6rem; font-weight: 800; cursor: pointer; user-select: none; letter-spacing: -0.5px; display: flex; align-items: center; }
         .mobile-logo span { color: var(--logo-accent); }
-        .header-actions { display: flex; align-items: center; gap: 15px; width: 100%; justify-content: space-between; }
-        .role-switch-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 8px 14px; border-radius: 20px; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 600; transition: 0.3s; }
+        .header-actions { display: flex; align-items: center; gap: 12px; width: 100%; justify-content: space-between; }
+        .role-switch-btn { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: white; padding: 8px 16px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 700; transition: 0.3s; }
         .role-switch-btn:hover, .role-switch-btn.business-mode { background: var(--accent-dark); color: white; border-color: var(--accent-dark); }
-        .points-pill { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; display: flex; align-items: center; gap: 5px; cursor: pointer; }
+        .points-pill { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.15); padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; display: flex; align-items: center; gap: 6px; cursor: pointer; }
 
         /* SCROLLABLE CONTENT */
         #content-area {
             flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 15px 15px 30px 15px; background: var(--bg-color); scroll-behavior: smooth;
+            padding-bottom: calc(110px + env(safe-area-inset-bottom)); /* ABSOLUTE BOTTOM CLEARANCE */
         }
+        
+        /* DESKTOP CONTAINER (The secret to good Laptop UI) */
+        .desktop-container { width: 100%; max-width: 1000px; margin: 0 auto; }
+
         .view-section { display: none; animation: fadeIn 0.2s ease; }
         .view-section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
@@ -95,27 +102,34 @@
         .search-bar { width: 100%; padding: 14px 18px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); margin-bottom: 15px; transition: 0.2s; }
         .search-bar:focus-within { border-color: var(--accent-dark); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .search-bar input { border: none; outline: none; width: 100%; font-size: 0.95rem; background: transparent; color: var(--text-dark); }
+        
         .grid-layout { display: grid; grid-template-columns: 1fr; gap: 15px; }
         .card { background: var(--surface); border-radius: 14px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid var(--border); transition: transform 0.2s, box-shadow 0.2s; position: relative;}
+        .card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.06); }
+        
         .tag { font-size: 0.65rem; padding: 5px 8px; border-radius: 6px; font-weight: 800; display: inline-block; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
         .tag-accent { background: rgba(16, 185, 129, 0.1); color: var(--accent-dark); }
         .tag-navy { background: rgba(15, 23, 42, 0.06); color: var(--primary); }
-        .btn { background: var(--primary); color: white; border: none; padding: 12px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 0.9rem; text-align: center; }
+        
+        .btn { background: var(--primary); color: white; border: none; padding: 12px 16px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 0.9rem; text-align: center; }
         .btn-accent { background: var(--accent-dark); color: white; }
         .btn-outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); font-weight: 700; }
         .btn:hover { opacity: 0.9; transform: scale(0.98); }
+        
         .card-image-wrap { display: flex; gap: 15px; align-items: stretch; margin-bottom: 15px; }
         .shop-logo { width: 85px; height: 85px; border-radius: 10px; object-fit: cover; border: 1px solid var(--border); flex-shrink: 0; }
         .scroll-row { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 5px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
         .scroll-row::-webkit-scrollbar { display: none; }
         .filter-btn { padding: 10px 18px; border-radius: 20px; border: 1px solid var(--border); background: var(--surface); white-space: nowrap; font-size: 0.85rem; font-weight: 600; cursor: pointer; color: var(--text-gray); box-shadow: 0 2px 6px rgba(0,0,0,0.02); transition: 0.2s;}
         .filter-btn:hover, .filter-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+        
         .product-card { min-width: 140px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); display: flex; flex-direction: column; position: relative;}
         .product-img { width: 100%; height: 90px; object-fit: cover; border-radius: 8px; margin-bottom: 8px; background: #eee; }
 
         /* BOTTOM NAVIGATIONS */
         .bottom-nav-bar {
-            flex-shrink: 0; width: 100%; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; align-items: center; border-top: 1px solid var(--border); z-index: 50;
+            position: absolute; bottom: 0; left: 0; right: 0;
+            background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); display: flex; justify-content: space-around; align-items: center; border-top: 1px solid var(--border); z-index: 50;
             padding-top: 12px; padding-bottom: max(15px, env(safe-area-inset-bottom)); box-shadow: 0 -5px 20px rgba(0,0,0,0.03);
         }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-gray); font-size: 0.7rem; cursor: pointer; flex: 1; font-weight: 600; }
@@ -123,20 +137,22 @@
         .nav-item.active { color: var(--primary); font-weight: 800; }
         .nav-item.active i { color: var(--accent-dark); transform: translateY(-3px); }
 
+        /* Chart Styles */
+        .chart-container { display: flex; height: 180px; margin-top: 20px; }
+        .y-axis { display: flex; flex-direction: column; justify-content: space-between; font-size: 0.7rem; color: var(--text-gray); padding-right: 15px; text-align: right; font-weight: 600; }
+        .chart-area { flex: 1; position: relative; border-bottom: 2px solid var(--border); border-left: 2px solid var(--border); }
+        .x-axis { display: flex; justify-content: space-between; padding-left: 45px; margin-top: 10px; font-size: 0.7rem; color: var(--text-gray); font-weight: 600; }
+
         /* Toast */
         #toast { position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%); background: #1E293B; color: white; padding: 14px 28px; border-radius: 30px; font-size: 0.9rem; font-weight: 600; opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 9999; box-shadow: 0 10px 25px rgba(0,0,0,0.2); white-space: nowrap; }
         #toast.show { opacity: 1; }
-        
-        .tracking-card { border-left: 4px solid var(--accent-dark); background: white; padding: 16px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border); border-left-width: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
-        .payment-option { display: flex; justify-content: space-between; align-items: center; padding: 14px; border: 2px solid var(--border); border-radius: 12px; margin-bottom: 10px; background: white; cursor: pointer; transition: 0.2s; position: relative;}
-        .payment-option:hover, .payment-option.selected { border-color: var(--accent-dark); background: rgba(16, 185, 129, 0.03); }
 
         @media (min-width: 768px) {
             .mobile-logo { display: none; } 
             #sidebar { display: flex; }     
             .bottom-nav-bar { display: none !important; }  
             #content-area { padding: 40px 50px; }
-            .grid-layout { grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 25px; }
+            .grid-layout { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
             header { padding: 20px 40px; justify-content: flex-end; } 
             .header-actions { justify-content: flex-end; }
         }
@@ -160,11 +176,11 @@
                 <div class="sidebar-item" onclick="switchTab('settings')"><i class="fa-solid fa-gear"></i> Settings</div>
             </div>
             <div id="desktop-nav-business" style="display: none; margin-top: 10px;">
-                <div style="padding: 0 25px 10px; font-size: 0.75rem; color: var(--accent-dark); text-transform: uppercase; font-weight: 700;">Merchant Tools</div>
+                <div style="padding: 0 25px 10px; font-size: 0.75rem; color: var(--accent-dark); text-transform: uppercase; font-weight: 800;">Merchant Tools</div>
                 <div class="sidebar-item active" onclick="switchTab('biz-dash')"><i class="fa-solid fa-chart-line"></i> Dashboard</div>
                 <div class="sidebar-item" onclick="switchTab('biz-orders')"><i class="fa-solid fa-bell"></i> Live Orders</div>
                 <div class="sidebar-item" onclick="switchTab('biz-inventory')"><i class="fa-solid fa-box"></i> Inventory</div>
-                <div class="sidebar-item" onclick="switchTab('biz-web')"><i class="fa-solid fa-globe"></i> Digital Storefront</div>
+                <div class="sidebar-item" onclick="switchTab('biz-web')"><i class="fa-solid fa-globe"></i> Storefront</div>
                 <div class="sidebar-item" onclick="switchTab('settings')"><i class="fa-solid fa-gear"></i> Settings</div>
             </div>
         </div>
@@ -192,291 +208,358 @@
                      TAB 1: SHOP & DISCOVER
                      ========================================== -->
                 <div id="view-shop" class="view-section active">
-                    <div class="search-bar">
-                        <i class="fa-solid fa-magnifying-glass" style="color: var(--text-gray);"></i>
-                        <input type="text" placeholder="Search stores, food, or products...">
-                    </div>
-
-                    <div class="scroll-row" style="margin-bottom: 25px;">
-                        <button class="filter-btn active">All</button>
-                        <button class="filter-btn"><i class="fa-solid fa-basket-shopping"></i> Groceries</button>
-                        <button class="filter-btn"><i class="fa-solid fa-utensils"></i> Restaurants</button>
-                        <button class="filter-btn"><i class="fa-solid fa-hammer"></i> Hardware</button>
-                        <button class="filter-btn"><i class="fa-solid fa-shirt"></i> Fashion</button>
-                    </div>
-
-                    <h2 class="section-title" style="margin-top: 10px;">Trending Products Nearby</h2>
-                    <div class="scroll-row" id="product-list" data-save-container="true">
-                        <div class="product-card">
-                            <img src="https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=150&q=80" class="product-img" data-edit-id="prod1-img">
-                            <h4 style="font-size: 0.95rem; color: var(--text-dark);" data-edit-id="prod1-title">Fresh Milk 1L</h4>
-                            <p style="font-size: 1.05rem; font-weight: 800; color: var(--primary);" data-edit-id="prod1-price">₹65</p>
-                            <p style="font-size: 0.75rem; color: var(--text-gray); margin-top: auto; padding-top: 5px;" data-edit-id="prod1-shop"><i class="fa-solid fa-store"></i> Reddy's • 0.2km</p>
-                            <button class="btn btn-accent" style="width: 100%; padding: 8px; font-size: 0.8rem; margin-top: 10px;" onclick="showToast('Added to Cart!')">Add</button>
-                            <button class="delete-btn" onclick="this.parentElement.remove(); saveContainer('product-list')">Delete</button>
+                    <div class="desktop-container">
+                        <div class="search-bar">
+                            <i class="fa-solid fa-magnifying-glass" style="color: var(--text-gray);"></i>
+                            <input type="text" placeholder="Search stores, food, or products...">
                         </div>
-                        <div class="product-card">
-                            <img src="https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&w=150&q=80" class="product-img" data-edit-id="prod2-img">
-                            <h4 style="font-size: 0.95rem; color: var(--text-dark);" data-edit-id="prod2-title">Wireless Mouse</h4>
-                            <p style="font-size: 1.05rem; font-weight: 800; color: var(--primary);" data-edit-id="prod2-price">₹499</p>
-                            <p style="font-size: 0.75rem; color: var(--text-gray); margin-top: auto; padding-top: 5px;" data-edit-id="prod2-shop"><i class="fa-solid fa-store"></i> Elite Tech • 1.1km</p>
-                            <button class="btn btn-accent" style="width: 100%; padding: 8px; font-size: 0.8rem; margin-top: 10px;" onclick="showToast('Added to Cart!')">Add</button>
-                            <button class="delete-btn" onclick="this.parentElement.remove(); saveContainer('product-list')">Delete</button>
-                        </div>
-                    </div>
-                    <button class="add-new-btn" onclick="addNewItem('product', 'product-list')">+ Add New Product</button>
 
-                    <h2 class="section-title">Restaurants & Dining</h2>
-                    <div class="grid-layout" id="rest-list" data-save-container="true">
-                        <div class="card">
-                            <div class="card-image-wrap">
-                                <img src="https://images.unsplash.com/photo-1631515243349-e0cb75fb8d3a?auto=format&fit=crop&w=150&q=80" class="shop-logo" data-edit-id="rest1-img">
-                                <div style="flex:1;">
-                                    <span class="tag tag-accent" data-edit-id="rest1-tag">Delivery + Dine-in</span>
-                                    <h3 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 2px;" data-edit-id="rest1-title">Paradise Biryani</h3>
-                                    <p style="font-size: 0.85rem; color: var(--text-gray);" data-edit-id="rest1-desc">Indian cuisine • 0.8 km • ★ 4.8</p>
+                        <div class="scroll-row" style="margin-bottom: 25px;">
+                            <button class="filter-btn active">All</button>
+                            <button class="filter-btn"><i class="fa-solid fa-basket-shopping"></i> Groceries</button>
+                            <button class="filter-btn"><i class="fa-solid fa-utensils"></i> Restaurants</button>
+                            <button class="filter-btn"><i class="fa-solid fa-hammer"></i> Hardware</button>
+                            <button class="filter-btn"><i class="fa-solid fa-shirt"></i> Fashion</button>
+                        </div>
+
+                        <h2 class="section-title" style="margin-top: 10px;">Trending Products Nearby</h2>
+                        <div class="scroll-row" id="product-list" data-save-container="true">
+                            <div class="product-card">
+                                <img src="https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=150&q=80" class="product-img" data-edit-id="prod1-img">
+                                <h4 style="font-size: 0.95rem; color: var(--text-dark);" data-edit-id="prod1-title">Fresh Milk 1L</h4>
+                                <p style="font-size: 1.05rem; font-weight: 800; color: var(--primary);" data-edit-id="prod1-price">₹65</p>
+                                <p style="font-size: 0.75rem; color: var(--text-gray); margin-top: auto; padding-top: 5px;" data-edit-id="prod1-shop"><i class="fa-solid fa-store"></i> Reddy's • 0.2km</p>
+                                <button class="btn btn-accent" style="width: 100%; padding: 8px; font-size: 0.8rem; margin-top: 10px;" onclick="showToast('Added to Cart!')">Add</button>
+                                <button class="delete-btn" onclick="this.parentElement.remove(); saveContainer('product-list')">Delete</button>
+                            </div>
+                            <div class="product-card">
+                                <img src="https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&w=150&q=80" class="product-img" data-edit-id="prod2-img">
+                                <h4 style="font-size: 0.95rem; color: var(--text-dark);" data-edit-id="prod2-title">Wireless Mouse</h4>
+                                <p style="font-size: 1.05rem; font-weight: 800; color: var(--primary);" data-edit-id="prod2-price">₹499</p>
+                                <p style="font-size: 0.75rem; color: var(--text-gray); margin-top: auto; padding-top: 5px;" data-edit-id="prod2-shop"><i class="fa-solid fa-store"></i> Elite Tech • 1.1km</p>
+                                <button class="btn btn-accent" style="width: 100%; padding: 8px; font-size: 0.8rem; margin-top: 10px;" onclick="showToast('Added to Cart!')">Add</button>
+                                <button class="delete-btn" onclick="this.parentElement.remove(); saveContainer('product-list')">Delete</button>
+                            </div>
+                            <div class="product-card">
+                                <img src="https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&w=150&q=80" class="product-img" data-edit-id="prod3-img">
+                                <h4 style="font-size: 0.95rem; color: var(--text-dark);" data-edit-id="prod3-title">Cotton T-Shirt</h4>
+                                <p style="font-size: 1.05rem; font-weight: 800; color: var(--primary);" data-edit-id="prod3-price">₹350</p>
+                                <p style="font-size: 0.75rem; color: var(--text-gray); margin-top: auto; padding-top: 5px;" data-edit-id="prod3-shop"><i class="fa-solid fa-store"></i> Aura Fashion • 1.2km</p>
+                                <button class="btn btn-accent" style="width: 100%; padding: 8px; font-size: 0.8rem; margin-top: 10px;" onclick="showToast('Added to Cart!')">Add</button>
+                                <button class="delete-btn" onclick="this.parentElement.remove(); saveContainer('product-list')">Delete</button>
+                            </div>
+                        </div>
+                        <button class="add-new-btn" onclick="addNewItem('product', 'product-list')">+ Add New Product</button>
+
+                        <h2 class="section-title">Neighborhood Stores & Dining</h2>
+                        <div class="grid-layout" id="store-list" data-save-container="true">
+                            <div class="card">
+                                <div class="card-image-wrap">
+                                    <img src="https://images.unsplash.com/photo-1631515243349-e0cb75fb8d3a?auto=format&fit=crop&w=150&q=80" class="shop-logo" data-edit-id="rest1-img">
+                                    <div style="flex:1;">
+                                        <span class="tag tag-accent" data-edit-id="rest1-tag">Delivery + Dine-in</span>
+                                        <h3 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 2px;" data-edit-id="rest1-title">Paradise Biryani</h3>
+                                        <p style="font-size: 0.85rem; color: var(--text-gray);" data-edit-id="rest1-desc">Indian cuisine • 0.8 km • ★ 4.8</p>
+                                    </div>
                                 </div>
-                            </div>
-                            <div style="display: flex; gap: 12px; width: 100%;">
-                                <button class="btn" style="flex: 1;" onclick="switchTab('cart'); showToast('Opening Menu...')">View Menu</button>
-                                <button class="btn btn-outline" style="flex: 1;"><i class="fa-solid fa-map-location-dot"></i> Directions</button>
-                            </div>
-                            <button class="delete-btn" onclick="this.parentElement.remove(); saveContainer('rest-list')">Delete</button>
-                        </div>
-                    </div>
-                    <button class="add-new-btn" onclick="addNewItem('restaurant', 'rest-list')">+ Add New Restaurant</button>
-
-                    <h2 class="section-title">Neighborhood Stores</h2>
-                    <div class="grid-layout" id="store-list" data-save-container="true">
-                        <div class="card">
-                            <div class="card-image-wrap">
-                                <img src="https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=150&q=80" class="shop-logo" data-edit-id="shop1-img">
-                                <div style="flex:1;">
-                                    <span class="tag tag-navy" data-edit-id="shop1-tag">Live Inventory</span>
-                                    <h3 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 2px;" data-edit-id="shop1-title">Reddy's Supermart</h3>
-                                    <p style="font-size: 0.85rem; color: var(--text-gray);" data-edit-id="shop1-desc">Groceries • 0.2 km • ★ 4.9</p>
+                                <div style="display: flex; gap: 12px; width: 100%;">
+                                    <button class="btn" style="flex: 1;" onclick="switchTab('cart'); showToast('Opening Menu...')">View Menu</button>
+                                    <button class="btn btn-outline" style="flex: 1;"><i class="fa-solid fa-map-location-dot"></i> Directions</button>
                                 </div>
+                                <button class="delete-btn" onclick="this.parentElement.remove(); saveContainer('store-list')">Delete</button>
                             </div>
-                            <div style="display: flex; gap: 12px; width: 100%;">
-                                <button class="btn" style="flex: 1;">Shop App</button>
-                                <button class="btn btn-outline" style="flex: 1;">View Website</button>
+                            <div class="card">
+                                <div class="card-image-wrap">
+                                    <img src="https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=150&q=80" class="shop-logo" data-edit-id="shop1-img">
+                                    <div style="flex:1;">
+                                        <span class="tag tag-navy" data-edit-id="shop1-tag">Live Inventory</span>
+                                        <h3 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 2px;" data-edit-id="shop1-title">Reddy's Supermart</h3>
+                                        <p style="font-size: 0.85rem; color: var(--text-gray);" data-edit-id="shop1-desc">Groceries • 0.2 km • ★ 4.9</p>
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 12px; width: 100%;">
+                                    <button class="btn" style="flex: 1;">Shop App</button>
+                                    <button class="btn btn-outline" style="flex: 1;">View Website</button>
+                                </div>
+                                <button class="delete-btn" onclick="this.parentElement.remove(); saveContainer('store-list')">Delete</button>
                             </div>
-                            <button class="delete-btn" onclick="this.parentElement.remove(); saveContainer('store-list')">Delete</button>
+                            <div class="card">
+                                <div class="card-image-wrap">
+                                    <img src="https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?auto=format&fit=crop&w=150&q=80" class="shop-logo" data-edit-id="shop2-img">
+                                    <div style="flex:1;">
+                                        <span class="tag tag-navy" data-edit-id="shop2-tag">Tools</span>
+                                        <h3 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 2px;" data-edit-id="shop2-title">Sri Ram Hardware</h3>
+                                        <p style="font-size: 0.85rem; color: var(--text-gray);" data-edit-id="shop2-desc">Hardware • 0.5 km</p>
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 12px; width: 100%;">
+                                    <button class="btn" style="flex: 1;">Shop App</button>
+                                    <button class="btn btn-outline" style="flex: 1;">View Website</button>
+                                </div>
+                                <button class="delete-btn" onclick="this.parentElement.remove(); saveContainer('store-list')">Delete</button>
+                            </div>
                         </div>
+                        <button class="add-new-btn" onclick="addNewItem('store', 'store-list')">+ Add New Store</button>
                     </div>
-                    <button class="add-new-btn" onclick="addNewItem('store', 'store-list')">+ Add New Store</button>
                 </div>
 
                 <!-- ==========================================
                      TAB 2: MOBILITY / RIDES
                      ========================================== -->
                 <div id="view-rides" class="view-section">
-                    <div class="tracking-card">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                            <div>
-                                <p style="font-size: 0.75rem; font-weight: 800; color: var(--accent-dark); letter-spacing: 0.5px;">ACTIVE RIDE</p>
-                                <h4 style="color: var(--primary); font-size: 1.1rem; margin-top: 2px; font-weight: 800;" data-edit-id="ride-track-title">Your Auto is arriving</h4>
-                                <p style="font-size: 0.85rem; color: var(--text-gray);" data-edit-id="ride-track-desc">TS 09 AB 1234 • Reaching in 3 mins</p>
-                            </div>
-                            <div style="background: var(--bg-color); border-radius: 50%; padding: 10px; border: 1px solid var(--border);">
-                                <i class="fa-solid fa-phone" style="color: var(--primary);"></i>
-                            </div>
-                        </div>
-                        <div style="width: 100%; height: 6px; background: #cbd5e1; border-radius: 10px; margin-top: 15px; overflow: hidden;"><div style="height: 100%; background: var(--accent-dark); width: 75%; border-radius: 10px;"></div></div>
-                    </div>
-
-                    <div class="search-bar" style="margin-bottom: 10px; background: white;">
-                        <i class="fa-solid fa-circle-dot" style="color: var(--accent-dark);"></i>
-                        <input type="text" value="Current Location: Jubilee Hills" readonly>
-                    </div>
-                    <div class="search-bar">
-                        <i class="fa-solid fa-location-dot" style="color: #ef4444;"></i>
-                        <input type="text" placeholder="Where do you want to go?">
-                    </div>
-
-                    <h2 class="section-title">Available Rides</h2>
-                    <div class="grid-layout" id="ride-list" data-save-container="true">
-                        <div class="payment-option selected" style="padding: 16px;" onclick="selectPayment(this)">
-                            <div style="display: flex; align-items: center; gap: 15px;">
-                                <div style="width: 50px; height: 50px; background: rgba(15, 23, 42, 0.05); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: var(--primary);">
-                                    <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M5.5 16h13a2 2 0 0 0 2-2v-3.5L17 5H7L3.5 10.5V14a2 2 0 0 0 2 2zM7.5 6.5h9l2 3H5.5l2-3z"></path><circle cx="7" cy="17.5" r="2.5"></circle><circle cx="17" cy="17.5" r="2.5"></circle></svg>
+                    <div class="desktop-container">
+                        <div class="card" style="border-left: 4px solid var(--accent-dark); background: white; margin-bottom: 20px;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                <div>
+                                    <p style="font-size: 0.75rem; font-weight: 800; color: var(--accent-dark); letter-spacing: 0.5px;">ACTIVE RIDE</p>
+                                    <h4 style="color: var(--primary); font-size: 1.1rem; margin-top: 2px; font-weight: 800;" data-edit-id="ride-track-title">Your Auto is arriving</h4>
+                                    <p style="font-size: 0.85rem; color: var(--text-gray);" data-edit-id="ride-track-desc">TS 09 AB 1234 • Reaching in 3 mins</p>
                                 </div>
-                                <div><h4 style="font-size: 1.1rem; font-weight:800;" data-edit-id="ride1-title">Auto</h4><p style="font-size: 0.8rem; color: var(--text-gray);" data-edit-id="ride1-desc">4 mins away • 3 seats</p></div>
+                                <div style="background: var(--bg-color); border-radius: 50%; padding: 10px; border: 1px solid var(--border);">
+                                    <i class="fa-solid fa-phone" style="color: var(--primary);"></i>
+                                </div>
                             </div>
-                            <h3 style="margin: 0; color: var(--primary);" data-edit-id="ride1-price">₹80</h3>
-                            <button class="delete-btn" onclick="this.parentElement.remove(); saveContainer('ride-list')" style="margin-left: 10px;">Delete</button>
+                            <div style="width: 100%; height: 6px; background: #cbd5e1; border-radius: 10px; margin-top: 15px; overflow: hidden;"><div style="height: 100%; background: var(--accent-dark); width: 75%; border-radius: 10px;"></div></div>
                         </div>
-                        <div class="payment-option" style="padding: 16px;" onclick="selectPayment(this)">
-                            <div style="display: flex; align-items: center; gap: 15px;">
-                                <div style="width: 50px; height: 50px; background: rgba(15, 23, 42, 0.05); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: var(--primary);"><i class="fa-solid fa-motorcycle" style="font-size:1.5rem;"></i></div>
-                                <div><h4 style="font-size: 1.1rem; font-weight:800;" data-edit-id="ride2-title">Bike</h4><p style="font-size: 0.8rem; color: var(--text-gray);" data-edit-id="ride2-desc">2 mins away • 1 seat</p></div>
+
+                        <div class="search-bar" style="margin-bottom: 10px; background: white;">
+                            <i class="fa-solid fa-circle-dot" style="color: var(--accent-dark);"></i>
+                            <input type="text" value="Current Location: Jubilee Hills" readonly>
+                        </div>
+                        <div class="search-bar">
+                            <i class="fa-solid fa-location-dot" style="color: #ef4444;"></i>
+                            <input type="text" placeholder="Where do you want to go?">
+                        </div>
+
+                        <h2 class="section-title">Available Rides</h2>
+                        <div class="grid-layout" id="ride-list" data-save-container="true">
+                            <div class="card payment-option selected" style="padding: 16px; display:flex;" onclick="selectPaymentMode(this)">
+                                <div style="display: flex; align-items: center; gap: 15px; flex:1;">
+                                    <div style="width: 50px; height: 50px; background: rgba(15, 23, 42, 0.05); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: var(--primary);">
+                                        <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M5.5 16h13a2 2 0 0 0 2-2v-3.5L17 5H7L3.5 10.5V14a2 2 0 0 0 2 2zM7.5 6.5h9l2 3H5.5l2-3z"></path><circle cx="7" cy="17.5" r="2.5"></circle><circle cx="17" cy="17.5" r="2.5"></circle></svg>
+                                    </div>
+                                    <div><h4 style="font-size: 1.1rem; font-weight:800;" data-edit-id="r1-title">Auto</h4><p style="font-size: 0.8rem; color: var(--text-gray);" data-edit-id="r1-desc">4 mins away • 3 seats</p></div>
+                                </div>
+                                <h3 style="margin: 0; color: var(--primary);" data-edit-id="r1-price">₹80</h3>
+                                <button class="delete-btn" onclick="this.parentElement.remove(); saveContainer('ride-list')">Delete</button>
                             </div>
-                            <h3 style="margin: 0; color: var(--primary);" data-edit-id="ride2-price">₹45</h3>
-                            <button class="delete-btn" onclick="this.parentElement.remove(); saveContainer('ride-list')" style="margin-left: 10px;">Delete</button>
+                            <div class="card payment-option" style="padding: 16px; display:flex;" onclick="selectPaymentMode(this)">
+                                <div style="display: flex; align-items: center; gap: 15px; flex:1;">
+                                    <div style="width: 50px; height: 50px; background: rgba(15, 23, 42, 0.05); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: var(--primary);"><i class="fa-solid fa-motorcycle" style="font-size:1.5rem;"></i></div>
+                                    <div><h4 style="font-size: 1.1rem; font-weight:800;" data-edit-id="r2-title">Bike</h4><p style="font-size: 0.8rem; color: var(--text-gray);" data-edit-id="r2-desc">2 mins away • 1 seat</p></div>
+                                </div>
+                                <h3 style="margin: 0; color: var(--primary);" data-edit-id="r2-price">₹45</h3>
+                                <button class="delete-btn" onclick="this.parentElement.remove(); saveContainer('ride-list')">Delete</button>
+                            </div>
+                            <div class="card payment-option" style="padding: 16px; display:flex;" onclick="selectPaymentMode(this)">
+                                <div style="display: flex; align-items: center; gap: 15px; flex:1;">
+                                    <div style="width: 50px; height: 50px; background: rgba(15, 23, 42, 0.05); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: var(--primary);"><i class="fa-solid fa-car" style="font-size:1.5rem;"></i></div>
+                                    <div><h4 style="font-size: 1.1rem; font-weight:800;" data-edit-id="r3-title">Cab</h4><p style="font-size: 0.8rem; color: var(--text-gray);" data-edit-id="r3-desc">6 mins away • 4 seats</p></div>
+                                </div>
+                                <h3 style="margin: 0; color: var(--primary);" data-edit-id="r3-price">₹150</h3>
+                                <button class="delete-btn" onclick="this.parentElement.remove(); saveContainer('ride-list')">Delete</button>
+                            </div>
                         </div>
+                        <button class="add-new-btn" onclick="addNewItem('ride', 'ride-list')">+ Add New Ride</button>
+                        <button class="btn btn-accent" style="margin-top: 10px; width: 100%; padding: 15px; font-size: 1.05rem;">Book Selected Ride</button>
                     </div>
-                    <button class="add-new-btn" onclick="addNewItem('ride', 'ride-list')">+ Add New Ride Option</button>
-                    <button class="btn btn-accent" style="margin-top: 10px; width: 100%; padding: 14px; font-size: 1.05rem;">Book Selected Ride</button>
                 </div>
 
                 <!-- ==========================================
                      TAB 3: SERVICES
                      ========================================== -->
                 <div id="view-services" class="view-section">
-                    <div class="scroll-row">
-                        <button class="filter-btn active">All</button>
-                        <button class="filter-btn">Bike Service</button>
-                        <button class="filter-btn">AC Repair</button>
-                        <button class="filter-btn">Plumber</button>
-                    </div>
-
-                    <h2 class="section-title">Verified Local Services</h2>
-                    <div class="grid-layout" id="service-list" data-save-container="true">
-                        <div class="card">
-                            <div class="card-image-wrap">
-                                <img src="https://images.unsplash.com/photo-1623910397576-9d6e8a49c4f4?auto=format&fit=crop&w=150&q=80" class="shop-logo" data-edit-id="srv1-img">
-                                <div style="flex:1;">
-                                    <span class="tag tag-accent" data-edit-id="srv1-tag">Live Tracked Service</span>
-                                    <h3 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 2px;" data-edit-id="srv1-title">Rao's Bike Care</h3>
-                                    <p style="font-size: 0.85rem; color: var(--text-gray);" data-edit-id="srv1-desc">Garage • 1.2 km away</p>
-                                </div>
-                            </div>
-                            <div style="display: flex; gap: 10px; width: 100%;">
-                                <button class="btn btn-outline" style="flex: 1;"><i class="fa-solid fa-phone"></i> Call</button>
-                                <button class="btn" style="flex: 2;">Book Drop-off</button>
-                            </div>
-                            <button class="delete-btn" onclick="this.parentElement.remove(); saveContainer('service-list')">Delete Service</button>
+                    <div class="desktop-container">
+                        <div class="scroll-row">
+                            <button class="filter-btn active">All</button>
+                            <button class="filter-btn">Bike Service</button>
+                            <button class="filter-btn">AC Repair</button>
+                            <button class="filter-btn">Plumber</button>
                         </div>
+
+                        <h2 class="section-title">Verified Local Services</h2>
+                        <div class="grid-layout" id="service-list" data-save-container="true">
+                            <div class="card">
+                                <div class="card-image-wrap">
+                                    <img src="https://images.unsplash.com/photo-1623910397576-9d6e8a49c4f4?auto=format&fit=crop&w=150&q=80" class="shop-logo" data-edit-id="srv1-img">
+                                    <div style="flex:1;">
+                                        <span class="tag tag-accent" data-edit-id="srv1-tag">Live Tracked Service</span>
+                                        <h3 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 2px;" data-edit-id="srv1-title">Rao's Bike Care</h3>
+                                        <p style="font-size: 0.85rem; color: var(--text-gray);" data-edit-id="srv1-desc">Garage • 1.2 km away</p>
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 10px; width: 100%;">
+                                    <button class="btn btn-outline" style="flex: 1;"><i class="fa-solid fa-phone"></i> Call</button>
+                                    <button class="btn" style="flex: 2;">Book Drop-off</button>
+                                </div>
+                                <button class="delete-btn" onclick="this.parentElement.remove(); saveContainer('service-list')">Delete</button>
+                            </div>
+                            <div class="card">
+                                <div class="card-image-wrap">
+                                    <img src="https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&w=150&q=80" class="shop-logo" data-edit-id="srv2-img">
+                                    <div style="flex:1;">
+                                        <span class="tag tag-navy" data-edit-id="srv2-tag">At-Home Service</span>
+                                        <h3 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 2px;" data-edit-id="srv2-title">Urban Cool Techs</h3>
+                                        <p style="font-size: 0.85rem; color: var(--text-gray);" data-edit-id="srv2-desc">AC Repair • ★ 4.7</p>
+                                    </div>
+                                </div>
+                                <button class="btn" style="width: 100%;">Book Home Visit</button>
+                                <button class="delete-btn" onclick="this.parentElement.remove(); saveContainer('service-list')">Delete</button>
+                            </div>
+                        </div>
+                        <button class="add-new-btn" onclick="addNewItem('service', 'service-list')">+ Add New Service</button>
                     </div>
-                    <button class="add-new-btn" onclick="addNewItem('service', 'service-list')">+ Add New Service</button>
                 </div>
 
                 <!-- ==========================================
                      TAB 4: JOBS
                      ========================================== -->
                 <div id="view-jobs" class="view-section">
-                    <h2 class="section-title">Hyperlocal Openings</h2>
-                    <div class="grid-layout" id="job-list" data-save-container="true">
-                        <div class="card">
-                            <div class="card-image-wrap" style="margin-bottom: 10px;">
-                                <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=150&q=80" class="shop-logo" data-edit-id="job1-img">
-                                <div>
-                                    <h3 style="color: var(--primary); font-weight: 800;" data-edit-id="job1-title">Store Manager</h3>
-                                    <p style="font-weight: 600; margin: 3px 0; font-size: 0.9rem;" data-edit-id="job1-desc">Reddy's Supermart</p>
+                    <div class="desktop-container">
+                        <h2 class="section-title">Hyperlocal Openings</h2>
+                        <div class="grid-layout" id="job-list" data-save-container="true">
+                            <div class="card">
+                                <div class="card-image-wrap" style="margin-bottom: 10px;">
+                                    <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=150&q=80" class="shop-logo" data-edit-id="job1-img">
+                                    <div>
+                                        <h3 style="color: var(--primary); font-weight: 800;" data-edit-id="job1-title">Store Manager</h3>
+                                        <p style="font-weight: 600; margin: 3px 0; font-size: 0.9rem;" data-edit-id="job1-desc">Reddy's Supermart</p>
+                                    </div>
                                 </div>
+                                <p style="font-size: 0.85rem; color: var(--text-gray);" data-edit-id="job1-meta"><i class="fa-solid fa-location-dot"></i> 0.2 km away &nbsp;•&nbsp; ₹ 18,000/mo</p>
+                                <button class="btn btn-accent" style="margin-top: 15px; width: 100%;">Apply for Job</button>
+                                <button class="delete-btn" onclick="this.parentElement.remove(); saveContainer('job-list')">Delete</button>
                             </div>
-                            <p style="font-size: 0.85rem; color: var(--text-gray);" data-edit-id="job1-meta"><i class="fa-solid fa-location-dot"></i> 0.2 km away &nbsp;•&nbsp; ₹ 18,000/mo</p>
-                            <button class="btn btn-accent" style="margin-top: 15px; width: 100%;">Apply for Job</button>
-                            <button class="delete-btn" onclick="this.parentElement.remove(); saveContainer('job-list')">Delete Job</button>
+                            <div class="card">
+                                <div class="card-image-wrap" style="margin-bottom: 10px;">
+                                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=150&q=80" class="shop-logo" data-edit-id="job2-img">
+                                    <div>
+                                        <h3 style="color: var(--primary); font-weight: 800;" data-edit-id="job2-title">Delivery Partner</h3>
+                                        <p style="font-weight: 600; margin: 3px 0; font-size: 0.9rem;" data-edit-id="job2-desc">NearByt Fleet</p>
+                                    </div>
+                                </div>
+                                <p style="font-size: 0.85rem; color: var(--text-gray);" data-edit-id="job2-meta"><i class="fa-solid fa-location-dot"></i> City-wide &nbsp;•&nbsp; Per Order Earnings</p>
+                                <button class="btn btn-accent" style="margin-top: 15px; width: 100%;">Apply for Job</button>
+                                <button class="delete-btn" onclick="this.parentElement.remove(); saveContainer('job-list')">Delete</button>
+                            </div>
                         </div>
+                        <button class="add-new-btn" onclick="addNewItem('job', 'job-list')">+ Add New Job</button>
                     </div>
-                    <button class="add-new-btn" onclick="addNewItem('job', 'job-list')">+ Add New Job</button>
                 </div>
 
                 <!-- ==========================================
                      TAB 5: CART & CHECKOUT
                      ========================================== -->
                 <div id="view-cart" class="view-section">
-                    <h2 class="section-title" style="margin-top: 5px;"><i class="fa-solid fa-cart-shopping"></i> My Cart</h2>
-                    
-                    <div class="card" style="margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between;">
-                        <div style="display: flex; gap: 15px; align-items: center;">
-                            <img src="https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=80&q=80" style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover;">
-                            <div>
-                                <h4 style="font-size: 1rem; color: var(--primary); font-weight: 800;">Fresh Milk 1L</h4>
-                                <p style="font-size: 0.8rem; color: var(--text-gray);">Reddy's Supermart</p>
-                                <p style="font-weight: 800; margin-top: 3px;">₹65</p>
+                    <div class="desktop-container">
+                        <h2 class="section-title" style="margin-top: 5px;"><i class="fa-solid fa-cart-shopping"></i> My Cart</h2>
+                        
+                        <div class="card" style="margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between;">
+                            <div style="display: flex; gap: 15px; align-items: center;">
+                                <img src="https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=80&q=80" style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover;">
+                                <div>
+                                    <h4 style="font-size: 1rem; color: var(--primary); font-weight: 800;">Fresh Milk 1L</h4>
+                                    <p style="font-size: 0.8rem; color: var(--text-gray);">Reddy's Supermart</p>
+                                    <p style="font-weight: 800; margin-top: 3px;">₹65</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px; background: var(--bg-color); padding: 5px 10px; border-radius: 8px;">
+                                <i class="fa-solid fa-minus" style="font-size: 0.8rem; cursor: pointer;"></i>
+                                <span style="font-weight: 800;">1</span>
+                                <i class="fa-solid fa-plus" style="font-size: 0.8rem; cursor: pointer;"></i>
                             </div>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 10px; background: var(--bg-color); padding: 5px 10px; border-radius: 8px;">
-                            <i class="fa-solid fa-minus" style="font-size: 0.8rem; cursor: pointer;"></i>
-                            <span style="font-weight: 800;">1</span>
-                            <i class="fa-solid fa-plus" style="font-size: 0.8rem; cursor: pointer;"></i>
-                        </div>
-                    </div>
 
-                    <div class="card" style="background: var(--surface); border: 2px dashed var(--border); margin-bottom: 25px;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.95rem; font-weight: 500;">
-                            <span>Subtotal</span><span>₹65</span>
+                        <div class="card" style="background: var(--surface); border: 2px dashed var(--border); margin-bottom: 25px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.95rem; font-weight: 500;">
+                                <span>Subtotal</span><span>₹65</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.95rem; font-weight: 500;">
+                                <span>Delivery Fee</span><span>₹15</span>
+                            </div>
+                            <hr style="border: 0; border-top: 1px solid var(--border); margin: 15px 0;">
+                            <div style="display: flex; justify-content: space-between; font-weight: 800; font-size: 1.2rem; color: var(--primary);">
+                                <span>Total</span><span>₹80</span>
+                            </div>
                         </div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.95rem; font-weight: 500;">
-                            <span>Delivery Fee</span><span>₹15</span>
-                        </div>
-                        <hr style="border: 0; border-top: 1px solid var(--border); margin: 15px 0;">
-                        <div style="display: flex; justify-content: space-between; font-weight: 800; font-size: 1.2rem; color: var(--primary);">
-                            <span>Total</span><span>₹80</span>
-                        </div>
-                    </div>
 
-                    <h3 style="font-size: 1.05rem; margin: 0 0 12px; color: var(--text-dark); font-weight: 800;">Payment Method</h3>
-                    <div class="grid-layout">
-                        <div class="payment-option selected" onclick="selectPaymentMode(this)">
-                            <div style="display: flex; align-items: center; gap: 15px;">
-                                <div style="width: 42px; height: 42px; background: rgba(16, 185, 129, 0.1); border-radius: 10px; display: flex; justify-content: center; align-items: center; color: var(--accent-dark);"><i class="fa-brands fa-google-pay" style="font-size: 1.6rem;"></i></div>
-                                <div><h4 style="font-size: 0.95rem; font-weight: 700; color: var(--primary);">UPI</h4><p style="font-size: 0.75rem; color: var(--text-gray);">GPay, PhonePe, Paytm</p></div>
+                        <h3 style="font-size: 1.05rem; margin: 0 0 12px; color: var(--text-dark); font-weight: 800;">Payment Method</h3>
+                        <div class="grid-layout">
+                            <div class="card payment-option selected" style="padding: 14px;" onclick="selectPaymentMode(this)">
+                                <div style="display: flex; align-items: center; gap: 15px;">
+                                    <div style="width: 42px; height: 42px; background: rgba(16, 185, 129, 0.1); border-radius: 10px; display: flex; justify-content: center; align-items: center; color: var(--accent-dark);"><i class="fa-brands fa-google-pay" style="font-size: 1.6rem;"></i></div>
+                                    <div><h4 style="font-size: 0.95rem; font-weight: 700; color: var(--primary);">UPI</h4><p style="font-size: 0.75rem; color: var(--text-gray);">GPay, PhonePe, Paytm</p></div>
+                                </div>
+                                <i class="fa-solid fa-circle-check check-icon" style="color: var(--accent-dark); font-size: 1.4rem;"></i>
                             </div>
-                            <i class="fa-solid fa-circle-check check-icon" style="color: var(--accent-dark); font-size: 1.4rem;"></i>
-                        </div>
-                        <div class="payment-option" onclick="selectPaymentMode(this)">
-                            <div style="display: flex; align-items: center; gap: 15px;">
-                                <div style="width: 42px; height: 42px; background: var(--bg-color); border-radius: 10px; display: flex; justify-content: center; align-items: center; color: var(--text-gray);"><i class="fa-regular fa-credit-card" style="font-size: 1.3rem;"></i></div>
-                                <div><h4 style="font-size: 0.95rem; font-weight: 700; color: var(--primary);">Credit / Debit Card</h4><p style="font-size: 0.75rem; color: var(--text-gray);">Visa, Mastercard, RuPay</p></div>
+                            <div class="card payment-option" style="padding: 14px;" onclick="selectPaymentMode(this)">
+                                <div style="display: flex; align-items: center; gap: 15px;">
+                                    <div style="width: 42px; height: 42px; background: var(--bg-color); border-radius: 10px; display: flex; justify-content: center; align-items: center; color: var(--text-gray);"><i class="fa-regular fa-credit-card" style="font-size: 1.3rem;"></i></div>
+                                    <div><h4 style="font-size: 0.95rem; font-weight: 700; color: var(--primary);">Credit / Debit Card</h4><p style="font-size: 0.75rem; color: var(--text-gray);">Visa, Mastercard, RuPay</p></div>
+                                </div>
+                                <i class="fa-regular fa-circle check-icon" style="color: var(--border); font-size: 1.4rem;"></i>
                             </div>
-                            <i class="fa-regular fa-circle check-icon" style="color: var(--border); font-size: 1.4rem;"></i>
-                        </div>
-                        <div class="payment-option" onclick="selectPaymentMode(this)">
-                            <div style="display: flex; align-items: center; gap: 15px;">
-                                <div style="width: 42px; height: 42px; background: var(--bg-color); border-radius: 10px; display: flex; justify-content: center; align-items: center; color: var(--text-gray);"><i class="fa-solid fa-wallet" style="font-size: 1.2rem;"></i></div>
-                                <div><h4 style="font-size: 0.95rem; font-weight: 700; color: var(--primary);">Cash / Pay at Store</h4><p style="font-size: 0.75rem; color: var(--text-gray);">Pay during delivery or pickup</p></div>
+                            <div class="card payment-option" style="padding: 14px;" onclick="selectPaymentMode(this)">
+                                <div style="display: flex; align-items: center; gap: 15px;">
+                                    <div style="width: 42px; height: 42px; background: var(--bg-color); border-radius: 10px; display: flex; justify-content: center; align-items: center; color: var(--text-gray);"><i class="fa-solid fa-wallet" style="font-size: 1.2rem;"></i></div>
+                                    <div><h4 style="font-size: 0.95rem; font-weight: 700; color: var(--primary);">Cash / Pay at Store</h4><p style="font-size: 0.75rem; color: var(--text-gray);">Pay during delivery or pickup</p></div>
+                                </div>
+                                <i class="fa-regular fa-circle check-icon" style="color: var(--border); font-size: 1.4rem;"></i>
                             </div>
-                            <i class="fa-regular fa-circle check-icon" style="color: var(--border); font-size: 1.4rem;"></i>
                         </div>
-                    </div>
 
-                    <button class="btn btn-accent" style="width: 100%; padding: 15px; font-size: 1.05rem; margin-top: 20px;" onclick="showToast('Order Placed Successfully!')">Place Order • ₹80</button>
+                        <button class="btn btn-accent" style="width: 100%; padding: 15px; font-size: 1.05rem; margin-top: 20px;" onclick="showToast('Order Placed Successfully!')">Place Order • ₹80</button>
+                    </div>
                 </div>
 
                 <!-- ==========================================
                      TAB 6: SETTINGS
                      ========================================== -->
                 <div id="view-settings" class="view-section">
-                    <h2 class="section-title" style="margin-top: 0;">My Account</h2>
-                    <div class="card" style="padding: 0; overflow: hidden; margin-bottom: 25px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 18px; border-bottom: 1px solid var(--border); cursor: pointer;">
-                            <div style="display: flex; align-items: center; gap: 15px;">
-                                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;" data-edit-id="user-img">
-                                <div>
-                                    <h4 style="font-size: 1.15rem; font-weight: 800; color: var(--primary);" data-edit-id="user-name">Rahul Sharma</h4>
-                                    <p style="font-size: 0.85rem; color: var(--text-gray);" data-edit-id="user-phone">+91 98765 43210</p>
+                    <div class="desktop-container">
+                        <h2 class="section-title" style="margin-top: 0;">My Account</h2>
+                        <div class="card" style="padding: 0; overflow: hidden; margin-bottom: 25px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 18px; border-bottom: 1px solid var(--border); cursor: pointer;">
+                                <div style="display: flex; align-items: center; gap: 15px;">
+                                    <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;" data-edit-id="user-img">
+                                    <div>
+                                        <h4 style="font-size: 1.15rem; font-weight: 800; color: var(--primary);" data-edit-id="user-name">Rahul Sharma</h4>
+                                        <p style="font-size: 0.85rem; color: var(--text-gray);" data-edit-id="user-phone">+91 98765 43210</p>
+                                    </div>
+                                </div>
+                                <i class="fa-solid fa-chevron-right" style="color:#ccc;"></i>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 18px; border-bottom: 1px solid var(--border); cursor: pointer;">
+                                <div style="font-weight: 600; color: var(--text-dark);"><i class="fa-solid fa-gift" style="color: #F59E0B; width: 25px;"></i> Rewards</div>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <span style="font-weight: 800; color: var(--primary);" data-edit-id="pts-bal-set">450 Coins</span>
+                                    <i class="fa-solid fa-chevron-right" style="color:#ccc;"></i>
                                 </div>
                             </div>
-                            <i class="fa-solid fa-chevron-right" style="color:#ccc;"></i>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 18px; border-bottom: 1px solid var(--border); cursor: pointer;">
-                            <div style="font-weight: 600; color: var(--text-dark);"><i class="fa-solid fa-gift" style="color: #F59E0B; width: 25px;"></i> Rewards</div>
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <span style="font-weight: 800; color: var(--primary);" data-edit-id="pts-bal-set">450 Coins</span>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 18px; cursor: pointer; border-bottom: 1px solid var(--border);">
+                                <div style="font-weight: 600; color: var(--text-dark);"><i class="fa-solid fa-credit-card" style="color: var(--primary); width: 25px;"></i> Payment Methods</div>
+                                <i class="fa-solid fa-chevron-right" style="color:#ccc;"></i>
+                            </div>
+                            <!-- NEW FULL SCREEN OPTION -->
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 18px; cursor: pointer;" onclick="toggleFullScreen()">
+                                <div style="font-weight: 600; color: var(--text-dark);"><i class="fa-solid fa-expand" style="color: var(--accent-dark); width: 25px;"></i> Full Screen Mode</div>
                                 <i class="fa-solid fa-chevron-right" style="color:#ccc;"></i>
                             </div>
                         </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 18px; cursor: pointer;">
-                            <div style="font-weight: 600; color: var(--text-dark);"><i class="fa-solid fa-credit-card" style="color: var(--primary); width: 25px;"></i> Payment Methods</div>
-                            <i class="fa-solid fa-chevron-right" style="color:#ccc;"></i>
-                        </div>
-                    </div>
 
-                    <h2 class="section-title">Business & Support</h2>
-                    <div class="card" style="padding: 0; overflow: hidden; margin-bottom: 20px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 18px; border-bottom: 1px solid var(--border); cursor: pointer;" onclick="showToast('Opening Business Form...')">
-                            <div style="font-weight: 600; color: var(--accent-dark);"><i class="fa-solid fa-shop-lock" style="width: 25px;"></i> Create Business Account</div>
-                            <i class="fa-solid fa-chevron-right" style="color:#ccc;"></i>
+                        <h2 class="section-title">Business & Support</h2>
+                        <div class="card" style="padding: 0; overflow: hidden; margin-bottom: 20px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 18px; border-bottom: 1px solid var(--border); cursor: pointer;" onclick="showToast('Opening Business Form...')">
+                                <div style="font-weight: 600; color: var(--accent-dark);"><i class="fa-solid fa-shop-lock" style="width: 25px;"></i> Create Business Account</div>
+                                <i class="fa-solid fa-chevron-right" style="color:#ccc;"></i>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 18px; cursor: pointer;" onclick="showToast('Calling Support...')">
+                                <div style="font-weight: 600; color: var(--text-dark);"><i class="fa-solid fa-headset" style="color: var(--primary); width: 25px;"></i> 24/7 Customer Care</div>
+                                <i class="fa-solid fa-chevron-right" style="color:#ccc;"></i>
+                            </div>
                         </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 18px; cursor: pointer;" onclick="showToast('Calling Support...')">
-                            <div style="font-weight: 600; color: var(--text-dark);"><i class="fa-solid fa-headset" style="color: var(--primary); width: 25px;"></i> 24/7 Customer Care</div>
-                            <i class="fa-solid fa-chevron-right" style="color:#ccc;"></i>
-                        </div>
+                        <button class="btn btn-outline" style="width: 100%; border-color: #ef4444; color: #ef4444; padding: 14px;">Log Out</button>
                     </div>
-                    <button class="btn btn-outline" style="width: 100%; border-color: #ef4444; color: #ef4444; padding: 14px;">Log Out</button>
                 </div>
 
 
@@ -486,127 +569,149 @@
 
                 <!-- BUSINESS TAB 1: DASHBOARD -->
                 <div id="view-biz-dash" class="view-section">
-                    <div class="card" style="margin-bottom: 25px;">
-                        <p style="font-size: 0.75rem; color: var(--text-gray); margin-bottom: 8px; text-transform: uppercase; font-weight: 800;">Active Storefront</p>
-                        <select style="padding: 12px 16px; border-radius: 10px; font-weight: 700; font-size: 1rem; width: 100%; border: 1px solid var(--border); background: var(--bg-color); outline: none; color: var(--primary);" data-edit-id="dash-dropdown">
-                            <option>Reddy's Supermart</option>
-                            <option>Aura Boutique (Draft)</option>
-                            <option>+ Create New Business</option>
-                        </select>
-                    </div>
+                    <div class="desktop-container">
+                        <div class="card" style="margin-bottom: 25px;">
+                            <p style="font-size: 0.75rem; color: var(--text-gray); margin-bottom: 8px; text-transform: uppercase; font-weight: 800;">Active Storefront</p>
+                            <select style="padding: 12px 16px; border-radius: 10px; font-weight: 700; font-size: 1rem; width: 100%; border: 1px solid var(--border); background: var(--bg-color); outline: none; color: var(--primary);" data-edit-id="dash-dropdown">
+                                <option>Reddy's Supermart</option>
+                                <option>Aura Boutique (Draft)</option>
+                                <option>+ Create New Business</option>
+                            </select>
+                        </div>
 
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;"><h2 style="font-size: 1.2rem; font-weight:800; color: var(--primary); margin:0;"><i class="fa-solid fa-chart-pie"></i> Overview</h2></div>
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 25px;">
-                        <div class="card" style="text-align: center; padding: 15px 10px;">
-                            <p style="font-size: 0.7rem; color: var(--text-gray); text-transform: uppercase; font-weight: 800;">Sales</p>
-                            <div style="font-size: 1.4rem; font-weight: 800; color: var(--primary); margin-top: 5px;" data-edit-id="biz-sales">₹12.4k</div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;"><h2 style="font-size: 1.2rem; font-weight:800; color: var(--primary); margin:0;"><i class="fa-solid fa-chart-pie"></i> Overview</h2></div>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 25px;">
+                            <div class="card" style="text-align: center; padding: 15px 10px;">
+                                <p style="font-size: 0.7rem; color: var(--text-gray); text-transform: uppercase; font-weight: 800;">Sales</p>
+                                <div style="font-size: 1.4rem; font-weight: 800; color: var(--primary); margin-top: 5px;" data-edit-id="biz-sales">₹12.4k</div>
+                            </div>
+                            <div class="card" style="text-align: center; padding: 15px 10px;">
+                                <p style="font-size: 0.7rem; color: var(--text-gray); text-transform: uppercase; font-weight: 800;">Orders</p>
+                                <div style="font-size: 1.4rem; font-weight: 800; color: var(--primary); margin-top: 5px;" data-edit-id="biz-orders">24</div>
+                            </div>
+                            <div class="card" style="text-align: center; padding: 15px 10px;">
+                                <p style="font-size: 0.7rem; color: var(--text-gray); text-transform: uppercase; font-weight: 800;">Views</p>
+                                <div style="font-size: 1.4rem; font-weight: 800; color: var(--primary); margin-top: 5px;" data-edit-id="biz-views">342</div>
+                            </div>
                         </div>
-                        <div class="card" style="text-align: center; padding: 15px 10px;">
-                            <p style="font-size: 0.7rem; color: var(--text-gray); text-transform: uppercase; font-weight: 800;">Orders</p>
-                            <div style="font-size: 1.4rem; font-weight: 800; color: var(--primary); margin-top: 5px;" data-edit-id="biz-orders">24</div>
-                        </div>
-                        <div class="card" style="text-align: center; padding: 15px 10px;">
-                            <p style="font-size: 0.7rem; color: var(--text-gray); text-transform: uppercase; font-weight: 800;">Views</p>
-                            <div style="font-size: 1.4rem; font-weight: 800; color: var(--primary); margin-top: 5px;" data-edit-id="biz-views">342</div>
-                        </div>
-                    </div>
 
-                    <div class="card" style="background: white; padding: 20px; text-align: center;">
-                        <p style="font-size: 0.85rem; color: var(--text-gray); font-weight: 600; margin-bottom: 15px;">Revenue This Week</p>
-                        <div style="display: flex; align-items: flex-end; justify-content: space-around; height: 120px; border-bottom: 2px solid var(--border); padding-bottom: 10px; gap: 8px;">
-                            <div style="background: rgba(16, 185, 129, 0.4); width: 100%; height: 40%; border-radius: 4px 4px 0 0;"></div>
-                            <div style="background: rgba(16, 185, 129, 0.6); width: 100%; height: 60%; border-radius: 4px 4px 0 0;"></div>
-                            <div style="background: rgba(16, 185, 129, 0.8); width: 100%; height: 50%; border-radius: 4px 4px 0 0;"></div>
-                            <div style="background: var(--accent-dark); width: 100%; height: 90%; border-radius: 4px 4px 0 0;"></div>
-                            <div style="background: rgba(16, 185, 129, 0.7); width: 100%; height: 70%; border-radius: 4px 4px 0 0;"></div>
-                        </div>
-                        <div style="display: flex; justify-content: space-around; margin-top: 10px; font-size: 0.7rem; color: var(--text-gray); font-weight: 700;">
-                            <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span>
+                        <!-- NEW: STUNNING SVG LINE GRAPH WITH LABELS -->
+                        <div class="card" style="padding: 20px; padding-bottom: 10px;">
+                            <p style="font-size: 0.85rem; color: var(--text-gray); font-weight: 700; margin-bottom: 15px;">Revenue This Week</p>
+                            <div class="chart-container">
+                                <div class="y-axis">
+                                    <span>₹15k</span><span>₹10k</span><span>₹5k</span><span>₹0</span>
+                                </div>
+                                <div class="chart-area">
+                                    <svg viewBox="0 0 500 150" preserveAspectRatio="none" style="width:100%; height:100%; overflow:visible;">
+                                        <!-- Gradient Fill -->
+                                        <polygon points="0,150 0,100 100,80 200,110 300,40 400,60 500,20 500,150" fill="rgba(16, 185, 129, 0.1)" />
+                                        <!-- Line -->
+                                        <polyline points="0,100 100,80 200,110 300,40 400,60 500,20" fill="none" stroke="var(--accent-dark)" stroke-width="3" stroke-linejoin="round" />
+                                        <!-- Data Points -->
+                                        <circle cx="0" cy="100" r="4" fill="var(--primary)" />
+                                        <circle cx="100" cy="80" r="4" fill="var(--primary)" />
+                                        <circle cx="200" cy="110" r="4" fill="var(--primary)" />
+                                        <circle cx="300" cy="40" r="4" fill="var(--primary)" />
+                                        <circle cx="400" cy="60" r="4" fill="var(--primary)" />
+                                        <circle cx="500" cy="20" r="4" fill="var(--accent-dark)" stroke="white" stroke-width="2" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="x-axis">
+                                <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- BUSINESS TAB 2: LIVE ORDERS -->
                 <div id="view-biz-orders" class="view-section">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;"><h2 style="font-size: 1.2rem; font-weight:800; color: var(--primary); margin:0;"><i class="fa-solid fa-bell"></i> Live Orders</h2> <span class="tag tag-accent" style="margin:0;">Pending</span></div>
-                    
-                    <div id="live-orders-list" data-save-container="true">
-                        <div class="card" style="margin-bottom: 15px; border-left: 5px solid var(--accent-dark);">
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                                <h4 style="color: var(--primary); font-size: 1.1rem; font-weight: 800;">Order #1042</h4>
-                                <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-gray);">Express Pickup</span>
+                    <div class="desktop-container">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;"><h2 style="font-size: 1.2rem; font-weight:800; color: var(--primary); margin:0;"><i class="fa-solid fa-bell"></i> Live Orders</h2> <span class="tag tag-accent" style="margin:0;">Pending</span></div>
+                        
+                        <div id="live-orders-list" data-save-container="true">
+                            <div class="card" style="margin-bottom: 15px; border-left: 5px solid var(--accent-dark);">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                                    <h4 style="color: var(--primary); font-size: 1.1rem; font-weight: 800;">Order #1042</h4>
+                                    <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-gray);">Express Pickup</span>
+                                </div>
+                                <p style="font-size: 0.95rem; font-weight: 500; margin-bottom: 15px; color: var(--text-dark);">2x Fresh Milk 1L, 1x Bread (₹170)</p>
+                                <div style="display: flex; gap: 12px;">
+                                    <button class="btn btn-accent" style="flex: 2;" onclick="this.parentElement.parentElement.remove(); showToast('Accepted & Packed!'); saveContainer('live-orders-list')">Accept & Pack</button>
+                                    <button class="btn btn-outline" style="flex: 1; color: #ef4444; border-color: #ef4444;" onclick="this.parentElement.parentElement.remove(); showToast('Cancelled.'); saveContainer('live-orders-list')">Cancel</button>
+                                </div>
                             </div>
-                            <p style="font-size: 0.95rem; font-weight: 500; margin-bottom: 15px; color: var(--text-dark);">2x Fresh Milk 1L, 1x Bread (₹170)</p>
-                            <div style="display: flex; gap: 12px;">
-                                <button class="btn btn-accent" style="flex: 2;" onclick="this.parentElement.parentElement.remove(); showToast('Accepted & Packed!'); saveContainer('live-orders-list')">Accept & Pack</button>
-                                <button class="btn btn-outline" style="flex: 1; color: #ef4444; border-color: #ef4444;" onclick="this.parentElement.parentElement.remove(); showToast('Cancelled.'); saveContainer('live-orders-list')">Cancel</button>
+                            <div class="card" style="margin-bottom: 15px; border-left: 5px solid var(--text-gray);">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                                    <h4 style="color: var(--primary); font-size: 1.1rem; font-weight: 800;">Order #1043</h4>
+                                    <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-gray);">Home Delivery</span>
+                                </div>
+                                <p style="font-size: 0.95rem; font-weight: 500; margin-bottom: 15px; color: var(--text-dark);">1x Detergent Powder 2kg (₹350)</p>
+                                <div style="display: flex; gap: 12px;">
+                                    <button class="btn btn-accent" style="flex: 2;" onclick="this.parentElement.parentElement.remove(); showToast('Accepted & Packed!'); saveContainer('live-orders-list')">Accept & Pack</button>
+                                    <button class="btn btn-outline" style="flex: 1; color: #ef4444; border-color: #ef4444;" onclick="this.parentElement.parentElement.remove(); showToast('Cancelled.'); saveContainer('live-orders-list')">Cancel</button>
+                                </div>
                             </div>
                         </div>
-                        <div class="card" style="margin-bottom: 15px; border-left: 5px solid var(--text-gray);">
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                                <h4 style="color: var(--primary); font-size: 1.1rem; font-weight: 800;">Order #1043</h4>
-                                <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-gray);">Home Delivery</span>
-                            </div>
-                            <p style="font-size: 0.95rem; font-weight: 500; margin-bottom: 15px; color: var(--text-dark);">1x Detergent Powder 2kg (₹350)</p>
-                            <div style="display: flex; gap: 12px;">
-                                <button class="btn btn-accent" style="flex: 2;" onclick="this.parentElement.parentElement.remove(); showToast('Accepted & Packed!'); saveContainer('live-orders-list')">Accept & Pack</button>
-                                <button class="btn btn-outline" style="flex: 1; color: #ef4444; border-color: #ef4444;" onclick="this.parentElement.parentElement.remove(); showToast('Cancelled.'); saveContainer('live-orders-list')">Cancel</button>
-                            </div>
-                        </div>
+                        <button class="add-new-btn" onclick="addNewItem('order', 'live-orders-list')">+ Add Demo Order</button>
                     </div>
-                    <button class="add-new-btn" onclick="addNewItem('order', 'live-orders-list')">+ Add Demo Order</button>
                 </div>
 
                 <!-- BUSINESS TAB 3: INVENTORY MANAGER -->
                 <div id="view-biz-inventory" class="view-section">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;"><h2 style="font-size: 1.2rem; font-weight:800; color: var(--primary); margin:0;"><i class="fa-solid fa-box-open"></i> Inventory Items</h2></div>
-                    
-                    <div class="card" style="padding: 0; overflow: hidden; margin-bottom: 15px;" id="inv-list" data-save-container="true">
-                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 15px; border-bottom: 1px solid var(--border);">
-                            <img src="https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=100&q=80" style="width: 55px; height: 55px; border-radius: 10px; object-fit: cover;" data-edit-id="inv1-img">
-                            <div style="flex: 1; margin-left: 15px;">
-                                <h4 style="font-size: 1rem; font-weight: 700; color: var(--primary);" data-edit-id="inv1-name">Fresh Milk 1L</h4>
-                                <p style="font-size: 0.85rem; color: var(--text-gray);" data-edit-id="inv1-price">₹65 • <span style="color:var(--accent-dark); font-weight:700;">In Stock</span></p>
+                    <div class="desktop-container">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;"><h2 style="font-size: 1.2rem; font-weight:800; color: var(--primary); margin:0;"><i class="fa-solid fa-box-open"></i> Inventory Items</h2></div>
+                        
+                        <div class="card" style="padding: 0; overflow: hidden; margin-bottom: 15px;" id="inv-list" data-save-container="true">
+                            <div style="display: flex; align-items: center; justify-content: space-between; padding: 15px; border-bottom: 1px solid var(--border);">
+                                <img src="https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=100&q=80" style="width: 55px; height: 55px; border-radius: 10px; object-fit: cover;" data-edit-id="inv1-img">
+                                <div style="flex: 1; margin-left: 15px;">
+                                    <h4 style="font-size: 1rem; font-weight: 700; color: var(--primary);" data-edit-id="inv1-name">Fresh Milk 1L</h4>
+                                    <p style="font-size: 0.85rem; color: var(--text-gray);" data-edit-id="inv1-price">₹65 • <span style="color:var(--accent-dark); font-weight:700;">In Stock</span></p>
+                                </div>
+                                <div style="display: flex; flex-direction: column; gap: 10px; align-items: center;">
+                                    <i class="fa-solid fa-pen-to-square" style="cursor:pointer; color: var(--text-gray);" onclick="secretToggle(); showToast('Edit Mode Triggered')"></i>
+                                    <i class="fa-solid fa-trash delete-btn" style="color: #ef4444; cursor: pointer; padding:0; margin:0; width:auto; font-size:1.1rem; background:transparent;" onclick="this.parentElement.parentElement.remove(); saveContainer('inv-list')"></i>
+                                </div>
                             </div>
-                            <div style="display: flex; flex-direction: column; gap: 10px; align-items: center;">
-                                <i class="fa-solid fa-pen-to-square" style="cursor:pointer; color: var(--text-gray);" onclick="secretToggle(); showToast('Edit Mode Triggered')"></i>
-                                <i class="fa-solid fa-trash delete-btn" style="color: #ef4444; cursor: pointer; padding:0; margin:0; width:auto; font-size:1.1rem; background:transparent;" onclick="this.parentElement.remove(); saveContainer('inv-list')"></i>
+                            <div style="display: flex; align-items: center; justify-content: space-between; padding: 15px; border-bottom: 1px solid var(--border);">
+                                <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=100&q=80" style="width: 55px; height: 55px; border-radius: 10px; object-fit: cover;" data-edit-id="inv2-img">
+                                <div style="flex: 1; margin-left: 15px;">
+                                    <h4 style="font-size: 1rem; font-weight: 700; color: var(--primary);" data-edit-id="inv2-name">Whole Wheat Bread</h4>
+                                    <p style="font-size: 0.85rem; color: var(--text-gray);" data-edit-id="inv2-price">₹40 • <span style="color:var(--accent-dark); font-weight:700;">In Stock</span></p>
+                                </div>
+                                <div style="display: flex; flex-direction: column; gap: 10px; align-items: center;">
+                                    <i class="fa-solid fa-pen-to-square" style="cursor:pointer; color: var(--text-gray);" onclick="secretToggle(); showToast('Edit Mode Triggered')"></i>
+                                    <i class="fa-solid fa-trash delete-btn" style="color: #ef4444; cursor: pointer; padding:0; margin:0; width:auto; font-size:1.1rem; background:transparent;" onclick="this.parentElement.parentElement.remove(); saveContainer('inv-list')"></i>
+                                </div>
                             </div>
                         </div>
-                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 15px; border-bottom: 1px solid var(--border);">
-                            <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=100&q=80" style="width: 55px; height: 55px; border-radius: 10px; object-fit: cover;" data-edit-id="inv2-img">
-                            <div style="flex: 1; margin-left: 15px;">
-                                <h4 style="font-size: 1rem; font-weight: 700; color: var(--primary);" data-edit-id="inv2-name">Whole Wheat Bread</h4>
-                                <p style="font-size: 0.85rem; color: var(--text-gray);" data-edit-id="inv2-price">₹40 • <span style="color:var(--accent-dark); font-weight:700;">In Stock</span></p>
-                            </div>
-                            <div style="display: flex; flex-direction: column; gap: 10px; align-items: center;">
-                                <i class="fa-solid fa-pen-to-square" style="cursor:pointer; color: var(--text-gray);" onclick="secretToggle(); showToast('Edit Mode Triggered')"></i>
-                                <i class="fa-solid fa-trash delete-btn" style="color: #ef4444; cursor: pointer; padding:0; margin:0; width:auto; font-size:1.1rem; background:transparent;" onclick="this.parentElement.remove(); saveContainer('inv-list')"></i>
-                            </div>
-                        </div>
+                        <button class="add-new-btn" onclick="addNewItem('inv', 'inv-list')">+ Add Product to Inventory</button>
                     </div>
-                    <button class="add-new-btn" onclick="addNewItem('inv', 'inv-list')">+ Add Product to Inventory</button>
                 </div>
 
                 <!-- BUSINESS TAB 4: WEBSITE -->
                 <div id="view-biz-web" class="view-section">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;"><h2 style="font-size: 1.2rem; font-weight:800; color: var(--primary); margin:0;"><i class="fa-solid fa-globe"></i> Digital Storefront</h2></div>
-                    
-                    <div class="card" style="padding: 0; overflow: hidden; margin-bottom: 18px;">
-                        <div style="background: var(--bg-color); padding: 10px 18px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border);">
-                            <div style="display: flex; gap: 6px;"><div style="width:12px; height:12px; border-radius:50%; background:#cbd5e1;"></div><div style="width:12px; height:12px; border-radius:50%; background:#cbd5e1;"></div></div>
-                            <div style="font-size: 0.8rem; color: var(--text-gray); font-family: monospace; background: white; padding: 6px 15px; border-radius: 15px; border: 1px solid var(--border); flex: 1; text-align: center;" data-edit-id="biz-url">reddy.nearbyt.in</div>
+                    <div class="desktop-container">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;"><h2 style="font-size: 1.2rem; font-weight:800; color: var(--primary); margin:0;"><i class="fa-solid fa-globe"></i> Digital Storefront</h2></div>
+                        
+                        <div class="card" style="padding: 0; overflow: hidden; margin-bottom: 18px;">
+                            <div style="background: var(--bg-color); padding: 10px 18px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border);">
+                                <div style="display: flex; gap: 6px;"><div style="width:12px; height:12px; border-radius:50%; background:#cbd5e1;"></div><div style="width:12px; height:12px; border-radius:50%; background:#cbd5e1;"></div></div>
+                                <div style="font-size: 0.8rem; color: var(--text-gray); font-family: monospace; background: white; padding: 6px 15px; border-radius: 15px; border: 1px solid var(--border); flex: 1; text-align: center;" data-edit-id="biz-url">reddy.nearbyt.in</div>
+                            </div>
+                            <div style="padding: 20px; text-align: center; background: #fafafa;">
+                                <img src="https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=400&q=80" style="width: 100%; height: 100px; object-fit: cover; border-radius: 10px; margin-bottom: 15px;" data-edit-id="biz-banner">
+                                <h3 style="color: var(--primary); font-size: 1.3rem; font-weight: 800; margin-bottom: 6px;" data-edit-id="biz-name">Reddy's Supermart</h3>
+                                <p style="font-size: 0.9rem; color: var(--text-gray); margin-bottom: 18px;" data-edit-id="biz-desc">Fresh Groceries Delivered in 10 mins</p>
+                                <button style="background: var(--primary); color: white; border: none; padding: 8px 20px; border-radius: 25px; font-size: 0.85rem; font-weight: 700;">Shop Now</button>
+                            </div>
                         </div>
-                        <div style="padding: 20px; text-align: center; background: #fafafa;">
-                            <img src="https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=400&q=80" style="width: 100%; height: 100px; object-fit: cover; border-radius: 10px; margin-bottom: 15px;" data-edit-id="biz-banner">
-                            <h3 style="color: var(--primary); font-size: 1.3rem; font-weight: 800; margin-bottom: 6px;" data-edit-id="biz-name">Reddy's Supermart</h3>
-                            <p style="font-size: 0.9rem; color: var(--text-gray); margin-bottom: 18px;" data-edit-id="biz-desc">Fresh Groceries Delivered in 10 mins</p>
-                            <button style="background: var(--primary); color: white; border: none; padding: 8px 20px; border-radius: 25px; font-size: 0.85rem; font-weight: 700;">Shop Now</button>
+                        <div style="display: flex; gap: 12px;">
+                            <button class="btn" style="flex: 2;" onclick="showToast('Opening Drag & Drop Builder...')"><i class="fa-solid fa-wand-magic-sparkles"></i> Edit Website Layout</button>
+                            <button class="btn btn-outline" style="flex: 1;" onclick="showToast('Link Copied!')"><i class="fa-solid fa-link"></i> Share</button>
                         </div>
-                    </div>
-                    <div style="display: flex; gap: 12px;">
-                        <button class="btn" style="flex: 2;" onclick="showToast('Opening Drag & Drop Builder...')"><i class="fa-solid fa-wand-magic-sparkles"></i> Edit Website Layout</button>
-                        <button class="btn btn-outline" style="flex: 1;" onclick="showToast('Link Copied!')"><i class="fa-solid fa-link"></i> Share</button>
                     </div>
                 </div>
 
@@ -616,41 +721,22 @@
                  DUAL BOTTOM NAVIGATIONS
                  ========================================== -->
             
-            <!-- Customer Bottom Nav -->
             <div id="bottom-nav-customer" class="bottom-nav-bar">
-                <div class="nav-item active" data-target="shop" onclick="switchTab('shop')">
-                    <i class="fa-solid fa-store"></i><span>Shop</span>
-                </div>
-                <div class="nav-item" data-target="rides" onclick="switchTab('rides')">
-                    <i class="fa-solid fa-car"></i><span>Rides</span>
-                </div>
-                <div class="nav-item" data-target="services" onclick="switchTab('services')">
-                    <i class="fa-solid fa-screwdriver-wrench"></i><span>Services</span>
-                </div>
-                <div class="nav-item" data-target="settings" onclick="switchTab('settings')">
-                    <i class="fa-solid fa-gear"></i><span>Settings</span>
-                </div>
+                <div class="nav-item active" data-target="shop" onclick="switchTab('shop')"><i class="fa-solid fa-store"></i><span>Shop</span></div>
+                <div class="nav-item" data-target="rides" onclick="switchTab('rides')"><i class="fa-solid fa-car"></i><span>Rides</span></div>
+                <div class="nav-item" data-target="services" onclick="switchTab('services')"><i class="fa-solid fa-screwdriver-wrench"></i><span>Services</span></div>
+                <div class="nav-item" data-target="settings" onclick="switchTab('settings')"><i class="fa-solid fa-gear"></i><span>Settings</span></div>
             </div>
 
-            <!-- Business Bottom Nav (Hidden by Default) -->
             <div id="bottom-nav-business" class="bottom-nav-bar" style="display: none;">
-                <div class="nav-item active" data-target="biz-dash" onclick="switchTab('biz-dash')">
-                    <i class="fa-solid fa-chart-line"></i><span>Dash</span>
-                </div>
-                <div class="nav-item" data-target="biz-orders" onclick="switchTab('biz-orders')">
-                    <i class="fa-solid fa-bell"></i><span>Orders</span>
-                </div>
-                <div class="nav-item" data-target="biz-inventory" onclick="switchTab('biz-inventory')">
-                    <i class="fa-solid fa-box"></i><span>Items</span>
-                </div>
-                <div class="nav-item" data-target="biz-web" onclick="switchTab('biz-web')">
-                    <i class="fa-solid fa-globe"></i><span>Web</span>
-                </div>
+                <div class="nav-item active" data-target="biz-dash" onclick="switchTab('biz-dash')"><i class="fa-solid fa-chart-line"></i><span>Dash</span></div>
+                <div class="nav-item" data-target="biz-orders" onclick="switchTab('biz-orders')"><i class="fa-solid fa-bell"></i><span>Orders</span></div>
+                <div class="nav-item" data-target="biz-inventory" onclick="switchTab('biz-inventory')"><i class="fa-solid fa-box"></i><span>Items</span></div>
+                <div class="nav-item" data-target="biz-web" onclick="switchTab('biz-web')"><i class="fa-solid fa-globe"></i><span>Web</span></div>
             </div>
 
         </div> <!-- End Main Container -->
 
-        <!-- TOAST POPUP -->
         <div id="toast">Message here</div>
     </div>
 
@@ -678,6 +764,17 @@
         function saveContainer(containerId) {
             const container = document.getElementById(containerId);
             if(container) { localStorage.setItem(containerId, container.innerHTML); }
+        }
+
+        // FULLSCREEN API
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    showToast(`Fullscreen not supported on this device/browser.`);
+                });
+            } else {
+                if (document.exitFullscreen) { document.exitFullscreen(); }
+            }
         }
 
         // --- 2. SECRET EDIT MODE LOGIC ---
@@ -757,10 +854,10 @@
                             <button class="delete-btn" onclick="this.parentElement.remove(); saveContainer('${containerId}')">Delete</button>
                         </div>`;
             } else if (type === 'ride') {
-                html = `<div class="payment-option" style="padding: 16px;" onclick="selectPayment(this)">
-                            <div style="display: flex; align-items: center; gap: 15px;">
+                html = `<div class="card payment-option" style="padding: 16px; display:flex;" onclick="selectPaymentMode(this)">
+                            <div style="display: flex; align-items: center; gap: 15px; flex:1;">
                                 <div style="width: 50px; height: 50px; background: rgba(15, 23, 42, 0.05); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: var(--primary);"><i class="fa-solid fa-car" style="font-size:1.5rem;"></i></div>
-                                <div><h4 style="font-size: 1.1rem; font-weight:800;" data-edit-id="title-${id}">New Ride Option</h4><p style="font-size: 0.8rem; color: var(--text-gray);" data-edit-id="desc-${id}">0 mins away • 1 seat</p></div>
+                                <div><h4 style="font-size: 1.1rem; font-weight:800;" data-edit-id="title-${id}">New Ride</h4><p style="font-size: 0.8rem; color: var(--text-gray);" data-edit-id="desc-${id}">0 mins away • 1 seat</p></div>
                             </div>
                             <h3 style="margin: 0; color: var(--primary);" data-edit-id="price-${id}">₹0</h3>
                             <button class="delete-btn" onclick="this.parentElement.remove(); saveContainer('${containerId}')" style="margin-left: 10px;">Delete</button>
@@ -821,13 +918,11 @@
             }
             
             container.insertAdjacentHTML('beforeend', html);
-            
             if(document.body.classList.contains('edit-mode')) {
                 container.querySelectorAll(`[data-edit-id*="${id}"]`).forEach(el => {
                     if (el.tagName !== 'IMG') el.contentEditable = true;
                 });
             }
-            
             saveContainer(containerId);
             showToast('Item Added Successfully!');
         }
@@ -852,12 +947,10 @@
                         canvas.width = 400; canvas.height = img.height * scaleSize;
                         canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
                         const b64 = canvas.toDataURL('image/jpeg', 0.8);
-                        
                         currentImageEl.src = b64;
                         const container = currentImageEl.closest('[data-save-container="true"]');
                         if(container) { saveContainer(container.id); } 
                         else { localStorage.setItem(currentImageEl.getAttribute('data-edit-id'), b64); }
-                        
                         showToast('Image saved locally!');
                     }
                     img.src = event.target.result;
@@ -871,39 +964,23 @@
         function toggleRole() {
             isBusinessMode = !isBusinessMode;
             const roleBtn = document.getElementById('role-btn');
-            
             const navCustomerDesktop = document.getElementById('desktop-nav-customer');
             const navBusinessDesktop = document.getElementById('desktop-nav-business');
-            
             const navCustomerMobile = document.getElementById('bottom-nav-customer');
             const navBusinessMobile = document.getElementById('bottom-nav-business');
 
             if (isBusinessMode) {
                 roleBtn.classList.add('business-mode');
                 roleBtn.innerHTML = `<i class="fa-solid fa-user"></i> <span id="role-text">Customer View</span>`;
-                
-                navCustomerDesktop.style.display = 'none'; 
-                navBusinessDesktop.style.display = 'block';
-                
-                if (window.innerWidth < 768) {
-                    navCustomerMobile.style.display = 'none';
-                    navBusinessMobile.style.display = 'flex';
-                }
-
+                navCustomerDesktop.style.display = 'none'; navBusinessDesktop.style.display = 'block';
+                if (window.innerWidth < 768) { navCustomerMobile.style.display = 'none'; navBusinessMobile.style.display = 'flex'; }
                 showToast('Switched to Business Dashboard');
                 switchTab('biz-dash'); 
             } else {
                 roleBtn.classList.remove('business-mode');
                 roleBtn.innerHTML = `<i class="fa-solid fa-user-gear"></i> <span id="role-text">Business</span>`;
-                
-                navCustomerDesktop.style.display = 'block'; 
-                navBusinessDesktop.style.display = 'none';
-
-                if (window.innerWidth < 768) {
-                    navCustomerMobile.style.display = 'flex';
-                    navBusinessMobile.style.display = 'none';
-                }
-
+                navCustomerDesktop.style.display = 'block'; navBusinessDesktop.style.display = 'none';
+                if (window.innerWidth < 768) { navCustomerMobile.style.display = 'flex'; navBusinessMobile.style.display = 'none'; }
                 showToast('Switched to Customer View');
                 switchTab('shop'); 
             }
@@ -912,59 +989,50 @@
         window.addEventListener('resize', () => {
             const navCustomerMobile = document.getElementById('bottom-nav-customer');
             const navBusinessMobile = document.getElementById('bottom-nav-business');
-            
             if (window.innerWidth >= 768) { 
-                navCustomerMobile.style.display = 'none'; 
-                navBusinessMobile.style.display = 'none';
+                navCustomerMobile.style.display = 'none'; navBusinessMobile.style.display = 'none';
             } else { 
-                if (isBusinessMode) {
-                    navCustomerMobile.style.display = 'none'; 
-                    navBusinessMobile.style.display = 'flex';
-                } else {
-                    navCustomerMobile.style.display = 'flex'; 
-                    navBusinessMobile.style.display = 'none';
-                }
+                if (isBusinessMode) { navCustomerMobile.style.display = 'none'; navBusinessMobile.style.display = 'flex'; } 
+                else { navCustomerMobile.style.display = 'flex'; navBusinessMobile.style.display = 'none'; }
             }
         });
 
         function switchTab(tabId) {
             document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-item, .sidebar-item').forEach(i => i.classList.remove('active'));
-            
             const v = document.getElementById('view-' + tabId); if(v) v.classList.add('active');
-            
             document.querySelectorAll(`.nav-item[data-target="${tabId}"]`).forEach(m => m.classList.add('active'));
             document.querySelectorAll('.sidebar-item').forEach(item => {
                 if (item.getAttribute('onclick') && item.getAttribute('onclick').includes(tabId)) { item.classList.add('active'); }
             });
-            
             document.getElementById('content-area').scrollTop = 0;
         }
 
         function selectPaymentMode(element) {
             document.querySelectorAll('.payment-option').forEach(opt => {
                 opt.classList.remove('selected');
-                const icon = opt.querySelector('.check-icon');
-                icon.classList.remove('fa-solid', 'fa-circle-check');
-                icon.classList.add('fa-regular', 'fa-circle');
-                icon.style.color = 'var(--border)';
-                opt.children[0].children[0].style.background = 'var(--bg-color)';
-                opt.children[0].children[0].style.color = 'var(--text-gray)';
+                const icon = opt.querySelector('.check-icon') || opt.querySelector('.fa-motorcycle') || opt.querySelector('.fa-car') || opt.querySelector('.fa-wallet') || opt.querySelector('.fa-credit-card');
+                if(icon && icon.classList.contains('check-icon')){
+                    icon.classList.remove('fa-solid', 'fa-circle-check');
+                    icon.classList.add('fa-regular', 'fa-circle');
+                    icon.style.color = 'var(--border)';
+                }
+                if(opt.children[0] && opt.children[0].children[0]) {
+                    opt.children[0].children[0].style.background = 'var(--bg-color)';
+                    opt.children[0].children[0].style.color = 'var(--text-gray)';
+                }
             });
-            
             element.classList.add('selected');
             const selectedIcon = element.querySelector('.check-icon');
-            selectedIcon.classList.remove('fa-regular', 'fa-circle');
-            selectedIcon.classList.add('fa-solid', 'fa-circle-check');
-            selectedIcon.style.color = 'var(--accent-dark)';
-            
-            element.children[0].children[0].style.background = 'rgba(16, 185, 129, 0.1)';
-            element.children[0].children[0].style.color = 'var(--accent-dark)';
-        }
-        
-        function selectRide(element) {
-            document.querySelectorAll('.ride-option').forEach(opt => opt.classList.remove('selected'));
-            element.classList.add('selected');
+            if(selectedIcon){
+                selectedIcon.classList.remove('fa-regular', 'fa-circle');
+                selectedIcon.classList.add('fa-solid', 'fa-circle-check');
+                selectedIcon.style.color = 'var(--accent-dark)';
+            }
+            if(element.children[0] && element.children[0].children[0]) {
+                element.children[0].children[0].style.background = 'rgba(16, 185, 129, 0.1)';
+                element.children[0].children[0].style.color = 'var(--accent-dark)';
+            }
         }
 
         let toastTimeout;

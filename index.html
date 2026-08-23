@@ -2,14 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- Essential for iPhone notch safe areas and full screen -->
+    <!-- Essential for iPhone notch safe areas, PWA, and disabling zoom -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
     <!-- iOS Home Screen / PWA Configuration -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="NearByt">
-    <link rel="apple-touch-icon" href="image_567de7.png">
+    
+    <!-- Pointing exactly to the file in your GitHub repo -->
+    <link rel="apple-touch-icon" href="nearbyt1.png">
+    <link rel="icon" type="image/png" href="nearbyt1.png">
     
     <title>NearByt - The Super App</title>
     <!-- Font Awesome for Icons -->
@@ -31,11 +34,17 @@
             --sidebar-width: 260px;
         }
 
-        /* --- GLOBAL RESET --- */
+        /* --- GLOBAL RESET & MOBILE FIXES --- */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         
-        /* Body background set to primary to prevent white flashes at the iPhone notch */
-        body { background-color: var(--primary); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+        /* 100dvh is the critical fix for iPhone address bars hiding the bottom nav */
+        html, body {
+            height: 100%;
+            height: 100dvh; 
+            overflow: hidden;
+            background-color: var(--primary); /* Blends with top notch */
+            -webkit-tap-highlight-color: transparent;
+        }
 
         /* --- SECRET EDIT MODE CSS --- */
         .edit-mode [data-edit-id] { border: 2px dashed var(--accent-dark); border-radius: 4px; cursor: text; min-height: 1.2em; transition: 0.2s; }
@@ -44,8 +53,8 @@
         .edit-mode img[data-edit-id]:hover { opacity: 0.5; }
 
         /* --- LAYOUT STRUCTURE --- */
-        #app-wrapper { background-color: var(--bg-color); display: flex; height: 100vh; width: 100%; overflow: hidden; }
-        #main-container { flex: 1; display: flex; flex-direction: column; height: 100%; position: relative; overflow: hidden; }
+        #app-wrapper { background-color: var(--bg-color); display: flex; height: 100%; width: 100%; overflow: hidden; }
+        #main-container { flex: 1; display: flex; flex-direction: column; position: relative; height: 100%; overflow: hidden; }
 
         /* SIDEBAR (LAPTOP ONLY) */
         #sidebar {
@@ -61,37 +70,29 @@
         /* HEADER */
         header {
             background-color: var(--primary); color: white; display: flex; justify-content: space-between; align-items: center; z-index: 10;
-            padding-top: max(15px, env(safe-area-inset-top));
-            padding-bottom: 15px;
-            padding-left: 20px;
-            padding-right: 20px;
+            padding-top: max(15px, env(safe-area-inset-top)); 
+            padding-bottom: 15px; padding-left: 20px; padding-right: 20px;
         }
         .mobile-logo { font-size: 1.5rem; font-weight: 700; cursor: pointer; user-select: none; }
         .mobile-logo span { color: var(--accent); }
         .header-actions { display: flex; align-items: center; gap: 15px; width: 100%; justify-content: space-between; }
         
-        .role-switch-btn {
-            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 8px 14px; border-radius: 20px; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 600; transition: 0.3s;
-        }
+        .role-switch-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 8px 14px; border-radius: 20px; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 600; transition: 0.3s; }
         .role-switch-btn:hover, .role-switch-btn.business-mode { background: var(--accent); color: var(--primary); border-color: var(--accent); }
-        
-        .points-pill { background: rgba(0,255,136,0.15); color: var(--accent); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; display: flex; align-items: center; gap: 5px; }
+        .points-pill { background: rgba(0,255,136,0.15); color: var(--accent); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; display: flex; align-items: center; gap: 5px; cursor: pointer; }
 
         /* SCROLLABLE CONTENT (Fixed Bottom Clearance for Mobile) */
         #content-area {
-            flex: 1; overflow-y: auto; 
-            -webkit-overflow-scrolling: touch; 
-            /* Increased padding-bottom to 120px to prevent the bottom nav from hiding the last items */
-            padding: 15px 15px calc(120px + env(safe-area-inset-bottom)); 
+            flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; 
+            padding: 15px 15px calc(100px + env(safe-area-inset-bottom)) 15px; 
             background: var(--bg-color); scroll-behavior: smooth;
         }
-        .view-section { display: none; animation: fadeIn 0.3s ease; }
+        .view-section { display: none; animation: fadeIn 0.2s ease; }
         .view-section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         /* --- UI COMPONENTS --- */
         h2.section-title { font-size: 1.15rem; margin: 25px 0 15px; color: var(--text-dark); font-weight: 700; letter-spacing: -0.3px;}
-        
         .search-bar { width: 100%; padding: 14px 18px; border-radius: 14px; border: 1px solid var(--border); background: var(--surface); display: flex; align-items: center; gap: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); margin-bottom: 15px; }
         .search-bar input { border: none; outline: none; width: 100%; font-size: 0.95rem; background: transparent; }
 
@@ -109,18 +110,14 @@
         .card-image-wrap { display: flex; gap: 15px; align-items: stretch; margin-bottom: 15px; }
         .shop-logo { width: 85px; height: 85px; border-radius: 12px; object-fit: cover; border: 1px solid var(--border); flex-shrink: 0; }
 
-        /* Horizontal Scroll Rows */
         .scroll-row { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 5px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
         .scroll-row::-webkit-scrollbar { display: none; }
-        
         .filter-btn { padding: 10px 18px; border-radius: 20px; border: 1px solid var(--border); background: var(--surface); white-space: nowrap; font-size: 0.85rem; font-weight: 600; cursor: pointer; color: var(--text-gray); box-shadow: 0 2px 4px rgba(0,0,0,0.02);}
         .filter-btn:hover, .filter-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
 
-        /* Individual Product Cards (Horizontal Scroll) */
         .product-card { min-width: 140px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
         .product-img { width: 100%; height: 90px; object-fit: cover; border-radius: 8px; margin-bottom: 8px; background: #eee; }
 
-        /* Ride/Service Tracking Bar */
         .tracking-card { border-left: 4px solid var(--accent-dark); background: #e8f9f0; padding: 16px; border-radius: 12px; margin-bottom: 20px; }
         .progress-bar-bg { width: 100%; height: 6px; background: #cbd5e1; border-radius: 10px; margin-top: 10px; overflow: hidden; }
         .progress-bar-fill { height: 100%; background: var(--accent-dark); width: 60%; border-radius: 10px; }
@@ -129,17 +126,19 @@
         .ride-option:hover, .ride-option.selected { border-color: var(--accent-dark); background: rgba(0, 255, 136, 0.05); }
         .ride-icon-box { width: 50px; height: 50px; background: var(--bg-color); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; color: var(--primary); }
 
-        /* Settings */
+        /* Checkout / Payment Options */
+        .payment-option { display: flex; justify-content: space-between; align-items: center; padding: 14px; border: 2px solid var(--border); border-radius: 12px; margin-bottom: 10px; background: white; cursor: pointer; transition: 0.2s; }
+        .payment-option:hover, .payment-option.selected { border-color: var(--accent-dark); background: rgba(0, 255, 136, 0.05); }
+
         .settings-list { background: var(--surface); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 25px; box-shadow: 0 2px 5px rgba(0,0,0,0.02);}
         .settings-item { display: flex; justify-content: space-between; align-items: center; padding: 18px; border-bottom: 1px solid var(--border); cursor: pointer; font-weight: 500; font-size: 0.95rem; color: var(--text-dark); }
         .settings-item:last-child { border-bottom: none; }
         .settings-icon { width: 32px; color: var(--primary); font-size: 1.1rem; }
 
-        /* Bottom Nav */
+        /* BOTTOM NAV (Fixed exactly at the bottom of the screen) */
         #bottom-nav {
-            position: absolute; bottom: 0; width: 100%; background: var(--surface); display: flex; justify-content: space-around; align-items: center; border-top: 1px solid var(--border); z-index: 10;
-            padding-top: 12px;
-            padding-bottom: max(15px, env(safe-area-inset-bottom)); 
+            position: absolute; bottom: 0; left: 0; right: 0; background: var(--surface); display: flex; justify-content: space-around; align-items: center; border-top: 1px solid var(--border); z-index: 50;
+            padding-top: 12px; padding-bottom: max(15px, env(safe-area-inset-bottom)); 
         }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-gray); font-size: 0.7rem; cursor: pointer; flex: 1; font-weight: 500; }
         .nav-item i { font-size: 1.3rem; margin-bottom: 6px; transition: 0.2s; }
@@ -171,7 +170,6 @@
         <!-- DESKTOP SIDEBAR -->
         <div id="sidebar">
             <div class="sidebar-logo" onclick="secretToggle()">Near<span>Byt</span></div>
-            
             <div id="desktop-nav-customer">
                 <div class="sidebar-item active" onclick="switchTab('shop')"><i class="fa-solid fa-store"></i> Shop & Discover</div>
                 <div class="sidebar-item" onclick="switchTab('rides')"><i class="fa-solid fa-car"></i> Mobility & Rides</div>
@@ -211,13 +209,11 @@
                 
                 <!-- TAB 1: SHOP & DISCOVER -->
                 <div id="view-shop" class="view-section active customer-view">
-                    
                     <div class="search-bar">
                         <i class="fa-solid fa-magnifying-glass" style="color: var(--text-gray);"></i>
                         <input type="text" placeholder="Search local stores, food, hardware, clothes...">
                     </div>
 
-                    <!-- Categories Scroll -->
                     <div class="scroll-row" style="margin-bottom: 20px;">
                         <button class="filter-btn active">All</button>
                         <button class="filter-btn"><i class="fa-solid fa-basket-shopping"></i> Groceries</button>
@@ -227,7 +223,6 @@
                         <button class="filter-btn"><i class="fa-solid fa-box-open"></i> Dropship</button>
                     </div>
 
-                    <!-- Trending Products Horizontal Scroll -->
                     <h2 class="section-title" style="margin-top: 10px;">Trending Products Nearby</h2>
                     <div class="scroll-row">
                         <div class="product-card">
@@ -253,7 +248,6 @@
                         </div>
                     </div>
 
-                    <!-- Restaurants Section -->
                     <h2 class="section-title">Restaurants & Dining</h2>
                     <div class="grid-layout">
                         <div class="card">
@@ -307,8 +301,6 @@
 
                 <!-- TAB 2: MOBILITY / RIDES -->
                 <div id="view-rides" class="view-section customer-view">
-                    
-                    <!-- Active Ride Tracking -->
                     <div class="tracking-card">
                         <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                             <div>
@@ -379,8 +371,6 @@
 
                 <!-- TAB 3: SERVICES -->
                 <div id="view-services" class="view-section customer-view">
-                    
-                    <!-- Active Service Tracking -->
                     <div class="tracking-card">
                         <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                             <div>
@@ -451,7 +441,7 @@
                     </div>
                 </div>
 
-                <!-- NEW TAB: CART -->
+                <!-- NEW TAB: CART & CHECKOUT -->
                 <div id="view-cart" class="view-section customer-view">
                     <h2 class="section-title" style="margin-top: 5px;"><i class="fa-solid fa-cart-shopping"></i> My Cart</h2>
                     
@@ -471,7 +461,7 @@
                         </div>
                     </div>
 
-                    <div class="card" style="background: #F8FAFC; border: 2px dashed var(--border);">
+                    <div class="card" style="background: #F8FAFC; border: 2px dashed var(--border); margin-bottom: 25px;">
                         <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.9rem;">
                             <span>Subtotal</span><span>₹65</span>
                         </div>
@@ -484,12 +474,60 @@
                         </div>
                     </div>
 
-                    <button class="btn btn-accent" style="width: 100%; padding: 14px; font-size: 1.05rem; margin-top: 20px;" onclick="showToast('Proceeding to Checkout...')">Checkout via UPI / Card</button>
+                    <!-- NEW: PAYMENT METHODS SELECTION -->
+                    <h3 style="font-size: 1.05rem; margin: 0 0 12px; color: var(--text-dark);">Payment Method</h3>
+                    <div class="grid-layout">
+                        
+                        <!-- UPI Option -->
+                        <div class="payment-option selected" onclick="selectPayment(this)">
+                            <div style="display: flex; align-items: center; gap: 15px;">
+                                <div style="width: 42px; height: 42px; background: #e8f9f0; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: var(--accent-dark);">
+                                    <i class="fa-brands fa-google-pay" style="font-size: 1.6rem;"></i>
+                                </div>
+                                <div>
+                                    <h4 style="font-size: 0.95rem; color: var(--primary);">UPI</h4>
+                                    <p style="font-size: 0.75rem; color: var(--text-gray);">GPay, PhonePe, Paytm</p>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-circle-check check-icon" style="color: var(--accent-dark); font-size: 1.4rem;"></i>
+                        </div>
+
+                        <!-- Card Option -->
+                        <div class="payment-option" onclick="selectPayment(this)">
+                            <div style="display: flex; align-items: center; gap: 15px;">
+                                <div style="width: 42px; height: 42px; background: #f1f5f9; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: var(--text-gray);">
+                                    <i class="fa-regular fa-credit-card" style="font-size: 1.3rem;"></i>
+                                </div>
+                                <div>
+                                    <h4 style="font-size: 0.95rem; color: var(--primary);">Credit / Debit Card</h4>
+                                    <p style="font-size: 0.75rem; color: var(--text-gray);">Visa, Mastercard, RuPay</p>
+                                </div>
+                            </div>
+                            <i class="fa-regular fa-circle check-icon" style="color: var(--border); font-size: 1.4rem;"></i>
+                        </div>
+
+                        <!-- COD Option -->
+                        <div class="payment-option" onclick="selectPayment(this)">
+                            <div style="display: flex; align-items: center; gap: 15px;">
+                                <div style="width: 42px; height: 42px; background: #f1f5f9; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: var(--text-gray);">
+                                    <i class="fa-solid fa-wallet" style="font-size: 1.2rem;"></i>
+                                </div>
+                                <div>
+                                    <h4 style="font-size: 0.95rem; color: var(--primary);">Cash / Pay at Store</h4>
+                                    <p style="font-size: 0.75rem; color: var(--text-gray);">Pay during delivery or pickup</p>
+                                </div>
+                            </div>
+                            <i class="fa-regular fa-circle check-icon" style="color: var(--border); font-size: 1.4rem;"></i>
+                        </div>
+
+                    </div>
+
+                    <!-- UPDATED CHECKOUT BUTTON -->
+                    <button class="btn btn-accent" style="width: 100%; padding: 15px; font-size: 1.05rem; margin-top: 20px;" onclick="showToast('Order Placed Successfully!')">Place Order • ₹80</button>
                 </div>
 
                 <!-- TAB 5: SETTINGS -->
                 <div id="view-settings" class="view-section">
-                    
                     <h2 class="section-title" style="margin-top: 0;">My Account</h2>
                     <div class="settings-list">
                         <div class="settings-item">
@@ -526,7 +564,6 @@
                             <i class="fa-solid fa-chevron-right" style="color:#ccc;"></i>
                         </div>
                     </div>
-
                     <button class="btn btn-outline" style="width: 100%; border-color: #ef4444; color: #ef4444; font-size: 1rem; padding: 14px;">Log Out</button>
                 </div>
 
@@ -672,7 +709,7 @@
             }
         });
 
-        // --- UI NAVIGATION LOGIC ---
+        // --- 5. UI NAVIGATION LOGIC ---
         let isBusinessMode = false;
 
         function toggleRole() {
@@ -738,6 +775,30 @@
         function selectRide(element) {
             document.querySelectorAll('.ride-option').forEach(opt => opt.classList.remove('selected'));
             element.classList.add('selected');
+        }
+
+        // --- 6. CHECKOUT PAYMENT LOGIC ---
+        function selectPayment(element) {
+            document.querySelectorAll('.payment-option').forEach(opt => {
+                opt.classList.remove('selected');
+                const icon = opt.querySelector('.check-icon');
+                icon.classList.remove('fa-solid', 'fa-circle-check');
+                icon.classList.add('fa-regular', 'fa-circle');
+                icon.style.color = 'var(--border)';
+                // Reset background color of the icon box to gray
+                opt.children[0].children[0].style.background = '#f1f5f9';
+                opt.children[0].children[0].style.color = 'var(--text-gray)';
+            });
+            
+            element.classList.add('selected');
+            const selectedIcon = element.querySelector('.check-icon');
+            selectedIcon.classList.remove('fa-regular', 'fa-circle');
+            selectedIcon.classList.add('fa-solid', 'fa-circle-check');
+            selectedIcon.style.color = 'var(--accent-dark)';
+            
+            // Highlight background color of the icon box to green
+            element.children[0].children[0].style.background = '#e8f9f0';
+            element.children[0].children[0].style.color = 'var(--accent-dark)';
         }
 
         let toastTimeout;

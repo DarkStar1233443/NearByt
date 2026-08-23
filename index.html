@@ -2,182 +2,173 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NearByt - Super App & Business Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>NearByt - Live Editable Prototype</title>
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
-        /* --- CSS VARIABLES (BRANDING) --- */
+        /* --- BRANDING & CSS VARIABLES --- */
         :root {
             --primary: #0A192F; 
             --accent: #00FF88;  
             --accent-dark: #00CC6A;
-            --bg-color: #F4F7F6;
+            --bg-color: #F8FAFC; /* Slightly brighter background for premium feel */
             --surface: #FFFFFF;
-            --text-dark: #1A1A1A;
-            --text-gray: #666666;
-            --border: #E0E0E0;
-            --sidebar-width: 250px;
+            --text-dark: #0F172A;
+            --text-gray: #64748B;
+            --border: #E2E8F0;
+            --sidebar-width: 260px;
         }
 
-        /* --- GLOBAL STYLES --- */
+        /* --- GLOBAL RESET --- */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background-color: var(--bg-color); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
 
-        /* --- APP LAYOUT (MOBILE FIRST) --- */
-        #app-wrapper {
-            display: flex;
-            height: 100vh;
-            width: 100%;
-        }
+        /* --- SECRET EDIT MODE CSS --- */
+        .edit-mode [data-edit-id] { border: 2px dashed var(--accent-dark); border-radius: 4px; cursor: text; min-height: 1.2em; transition: 0.2s; }
+        .edit-mode [data-edit-id]:focus { background: rgba(0, 255, 136, 0.1); outline: none; }
+        .edit-mode img[data-edit-id] { cursor: pointer; opacity: 0.8; border: 2px dashed var(--accent-dark); }
+        .edit-mode img[data-edit-id]:hover { opacity: 0.5; }
 
-        /* SIDEBAR (HIDDEN ON MOBILE) */
+        /* --- LAYOUT STRUCTURE --- */
+        #app-wrapper { display: flex; height: 100vh; width: 100%; overflow: hidden; }
+        #main-container { flex: 1; display: flex; flex-direction: column; height: 100%; position: relative; overflow: hidden; }
+
+        /* SIDEBAR (LAPTOP ONLY) */
         #sidebar {
-            display: none;
-            width: var(--sidebar-width);
-            background-color: var(--primary);
-            color: white;
-            flex-direction: column;
-            padding: 20px 0;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-            z-index: 20;
+            display: none; width: var(--sidebar-width); background-color: var(--primary); color: white; flex-direction: column; padding-bottom: 20px; box-shadow: 2px 0 10px rgba(0,0,0,0.1); z-index: 20;
+            padding-top: max(20px, env(safe-area-inset-top)); 
         }
-        .sidebar-logo {
-            font-size: 1.8rem; font-weight: 700; padding: 0 20px 30px; letter-spacing: -0.5px;
-        }
+        .sidebar-logo { font-size: 1.8rem; font-weight: 700; padding: 10px 25px 30px; letter-spacing: -0.5px; cursor: pointer; user-select: none; }
         .sidebar-logo span { color: var(--accent); }
-        .sidebar-item {
-            padding: 15px 25px; display: flex; align-items: center; gap: 15px; color: #A0ABC0; cursor: pointer; transition: 0.2s; font-weight: 600;
-        }
+        .sidebar-item { padding: 15px 25px; display: flex; align-items: center; gap: 15px; color: #94A3B8; cursor: pointer; transition: 0.2s; font-weight: 600; font-size: 0.95rem; }
         .sidebar-item:hover { color: white; background: rgba(255,255,255,0.05); }
-        .sidebar-item.active { color: var(--primary); background: var(--accent); border-radius: 0 25px 25px 0; margin-right: 15px; }
+        .sidebar-item.active { color: var(--primary); background: var(--accent); border-radius: 0 25px 25px 0; margin-right: 20px; }
 
-        /* MAIN CONTENT AREA */
-        #main-container {
-            flex: 1; display: flex; flex-direction: column; height: 100%; position: relative;
-        }
-
-        /* --- HEADER --- */
+        /* HEADER */
         header {
-            background-color: var(--primary); color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 10;
+            background-color: var(--primary); color: white; display: flex; justify-content: space-between; align-items: center; z-index: 10;
+            padding: max(15px, env(safe-area-inset-top)) 20px 15px 20px;
         }
-        .mobile-logo { font-size: 1.4rem; font-weight: 700; display: block; }
+        .mobile-logo { font-size: 1.5rem; font-weight: 700; cursor: pointer; user-select: none; }
         .mobile-logo span { color: var(--accent); }
+        .header-actions { display: flex; align-items: center; gap: 15px; width: 100%; justify-content: space-between; }
         
-        .header-actions { display: flex; align-items: center; gap: 15px; }
-        
-        /* ROLE TOGGLE BUTTON */
         .role-switch-btn {
-            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 600; transition: 0.3s;
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 8px 14px; border-radius: 20px; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 600; transition: 0.3s;
         }
-        .role-switch-btn:hover { background: var(--accent); color: var(--primary); border-color: var(--accent); }
-        .role-switch-btn.business-mode { background: var(--accent); color: var(--primary); }
+        .role-switch-btn:hover, .role-switch-btn.business-mode { background: var(--accent); color: var(--primary); border-color: var(--accent); }
+        
+        .points-pill { background: rgba(0,255,136,0.15); color: var(--accent); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; display: flex; align-items: center; gap: 5px; }
 
-        /* --- CONTENT VIEWS --- */
+        /* SCROLLABLE CONTENT */
         #content-area {
-            flex: 1; overflow-y: auto; padding: 15px 15px 80px; background: var(--bg-color); scroll-behavior: smooth;
+            flex: 1; overflow-y: auto; padding: 15px 15px calc(90px + env(safe-area-inset-bottom)); background: var(--bg-color); scroll-behavior: smooth;
         }
-        .view-section { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .view-section { display: none; animation: fadeIn 0.3s ease; }
         .view-section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         /* --- UI COMPONENTS --- */
-        h2.section-title { font-size: 1.2rem; margin: 20px 0 15px; color: var(--text-dark); }
+        h2.section-title { font-size: 1.15rem; margin: 25px 0 15px; color: var(--text-dark); font-weight: 700; letter-spacing: -0.3px;}
         
-        .search-bar {
-            width: 100%; padding: 14px 20px; border-radius: 25px; border: 1px solid var(--border); background: var(--surface); display: flex; align-items: center; gap: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); margin-bottom: 20px;
-        }
-        .search-bar input { border: none; outline: none; width: 100%; font-size: 1rem; }
+        .search-bar { width: 100%; padding: 14px 18px; border-radius: 14px; border: 1px solid var(--border); background: var(--surface); display: flex; align-items: center; gap: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); margin-bottom: 15px; }
+        .search-bar input { border: none; outline: none; width: 100%; font-size: 0.95rem; background: transparent; }
 
-        /* Grid System for Laptop */
         .grid-layout { display: grid; grid-template-columns: 1fr; gap: 15px; }
-
-        .card {
-            background: var(--surface); border-radius: 12px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: 1px solid var(--border); transition: transform 0.2s;
-        }
-        .card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.08); }
+        .card { background: var(--surface); border-radius: 16px; padding: 18px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid var(--border); transition: 0.2s; }
         
-        .tag { font-size: 0.7rem; padding: 4px 8px; border-radius: 4px; font-weight: 700; display: inline-block; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .tag { font-size: 0.65rem; padding: 5px 8px; border-radius: 6px; font-weight: 700; display: inline-block; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
         .tag-accent { background: rgba(0, 255, 136, 0.2); color: #00884A; }
         .tag-navy { background: rgba(10, 25, 47, 0.1); color: var(--primary); }
         
-        .btn { background: var(--primary); color: white; border: none; padding: 12px 15px; border-radius: 8px; font-weight: 600; width: 100%; cursor: pointer; transition: 0.2s; font-size: 0.95rem; }
+        .btn { background: var(--primary); color: white; border: none; padding: 12px 16px; border-radius: 10px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 0.9rem; text-align: center; }
         .btn-accent { background: var(--accent); color: var(--primary); }
-        .btn:hover { opacity: 0.9; }
+        .btn-outline { background: transparent; color: var(--primary); border: 1.5px solid var(--primary); }
 
-        /* Images inside cards */
-        .card-image-wrap { display: flex; gap: 15px; align-items: flex-start; }
-        .shop-logo { width: 70px; height: 70px; border-radius: 10px; object-fit: cover; border: 1px solid var(--border); }
-        .dropship-img { width: 90px; height: 90px; border-radius: 10px; object-fit: cover; }
+        .card-image-wrap { display: flex; gap: 15px; align-items: stretch; margin-bottom: 15px; }
+        .shop-logo { width: 85px; height: 85px; border-radius: 12px; object-fit: cover; border: 1px solid var(--border); flex-shrink: 0; }
 
-        /* Rides Tab Specific */
-        .ride-option {
-            display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border: 2px solid var(--border); border-radius: 12px; margin-bottom: 12px; background: white; cursor: pointer; transition: 0.2s;
-        }
+        /* Horizontal Scroll Rows */
+        .scroll-row { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 5px; scrollbar-width: none; }
+        .scroll-row::-webkit-scrollbar { display: none; }
+        
+        .filter-btn { padding: 10px 18px; border-radius: 20px; border: 1px solid var(--border); background: var(--surface); white-space: nowrap; font-size: 0.85rem; font-weight: 600; cursor: pointer; color: var(--text-gray); box-shadow: 0 2px 4px rgba(0,0,0,0.02);}
+        .filter-btn:hover, .filter-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+        /* Individual Product Cards (Horizontal Scroll) */
+        .product-card { min-width: 140px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+        .product-img { width: 100%; height: 90px; object-fit: cover; border-radius: 8px; margin-bottom: 8px; background: #eee; }
+
+        /* Ride/Service Tracking Bar */
+        .tracking-card { border-left: 4px solid var(--accent-dark); background: #e8f9f0; padding: 16px; border-radius: 12px; margin-bottom: 20px; }
+        .progress-bar-bg { width: 100%; height: 6px; background: #cbd5e1; border-radius: 10px; margin-top: 10px; overflow: hidden; }
+        .progress-bar-fill { height: 100%; background: var(--accent-dark); width: 60%; border-radius: 10px; }
+
+        .ride-option { display: flex; justify-content: space-between; align-items: center; padding: 16px; border: 2px solid var(--border); border-radius: 14px; margin-bottom: 12px; background: white; cursor: pointer; transition: 0.2s; }
         .ride-option:hover, .ride-option.selected { border-color: var(--accent-dark); background: rgba(0, 255, 136, 0.05); }
         .ride-icon-box { width: 50px; height: 50px; background: var(--bg-color); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; color: var(--primary); }
 
-        /* Business Dashboard Specific */
-        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .stat-card { background: var(--surface); padding: 20px; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
-        .stat-num { font-size: 1.8rem; font-weight: 700; color: var(--primary); margin: 5px 0; }
-        .upload-area { border: 2px dashed var(--border); padding: 30px; text-align: center; border-radius: 12px; cursor: pointer; background: #FAFAFA; transition: 0.2s; }
-        .upload-area:hover { border-color: var(--accent-dark); background: rgba(0,255,136,0.05); }
+        /* Settings */
+        .settings-list { background: var(--surface); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 25px; box-shadow: 0 2px 5px rgba(0,0,0,0.02);}
+        .settings-item { display: flex; justify-content: space-between; align-items: center; padding: 18px; border-bottom: 1px solid var(--border); cursor: pointer; font-weight: 500; font-size: 0.95rem; color: var(--text-dark); }
+        .settings-item:last-child { border-bottom: none; }
+        .settings-icon { width: 32px; color: var(--primary); font-size: 1.1rem; }
 
-        /* --- BOTTOM NAVIGATION (MOBILE ONLY) --- */
+        /* Bottom Nav */
         #bottom-nav {
-            position: absolute; bottom: 0; width: 100%; background: var(--surface); display: flex; justify-content: space-around; align-items: center; padding: 12px 0 25px; border-top: 1px solid var(--border); z-index: 10;
+            position: absolute; bottom: 0; width: 100%; background: var(--surface); display: flex; justify-content: space-around; align-items: center; border-top: 1px solid var(--border); z-index: 10;
+            padding: 12px 0 max(15px, env(safe-area-inset-bottom)); 
         }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-gray); font-size: 0.75rem; cursor: pointer; width: 25%; font-weight: 500; }
-        .nav-item i { font-size: 1.3rem; margin-bottom: 5px; transition: 0.2s; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-gray); font-size: 0.7rem; cursor: pointer; flex: 1; font-weight: 500; }
+        .nav-item i { font-size: 1.3rem; margin-bottom: 6px; transition: 0.2s; }
         .nav-item.active { color: var(--primary); font-weight: 700; }
         .nav-item.active i { color: var(--accent-dark); transform: translateY(-2px); }
 
-        /* --- TOAST --- */
-        #toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: #1A1A1A; color: white; padding: 14px 24px; border-radius: 30px; font-size: 0.9rem; font-weight: 600; opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 9999; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        /* Toast */
+        #toast { position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%); background: #1A1A1A; color: white; padding: 14px 28px; border-radius: 30px; font-size: 0.9rem; font-weight: 600; opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 9999; box-shadow: 0 10px 25px rgba(0,0,0,0.2); white-space: nowrap; }
         #toast.show { opacity: 1; }
 
-        /* =========================================
-           LAPTOP / DESKTOP RESPONSIVE BREAKPOINT
-           ========================================= */
         @media (min-width: 768px) {
-            .mobile-logo { display: none; } /* Hide header logo, use sidebar logo */
-            #sidebar { display: flex; } /* Show left sidebar */
-            #bottom-nav { display: none; } /* Hide bottom nav */
-            #content-area { padding: 30px 40px; } /* More breathing room */
-            
-            /* Expand Grids for Laptop Screen */
-            .grid-layout { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
-            .stat-grid { grid-template-columns: repeat(4, 1fr); }
-            
-            /* Layout Adjustments */
-            header { padding: 20px 40px; justify-content: flex-end; } /* Push buttons to right */
-            .header-actions { width: 100%; justify-content: space-between; }
+            .mobile-logo { display: none; } 
+            #sidebar { display: flex; }     
+            #bottom-nav { display: none; }  
+            #content-area { padding: 35px 45px; }
+            .grid-layout { grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 25px; }
+            header { padding: 20px 40px; justify-content: flex-end; } 
+            .header-actions { justify-content: flex-end; }
         }
     </style>
 </head>
 <body>
 
+    <!-- HIDDEN FILE UPLOADER FOR IMAGE EDITING -->
+    <input type="file" id="imageUploader" accept="image/*" style="display:none;">
+
     <div id="app-wrapper">
         
-        <!-- DESKTOP SIDEBAR (Hidden on Mobile) -->
+        <!-- DESKTOP SIDEBAR -->
         <div id="sidebar">
-            <div class="sidebar-logo">Near<span>Byt</span></div>
+            <div class="sidebar-logo" onclick="secretToggle()">Near<span>Byt</span></div>
+            
             <div id="desktop-nav-customer">
-                <div class="sidebar-item active" onclick="switchTab('shop')"><i class="fa-solid fa-store"></i> Shop & Dropship</div>
+                <div class="sidebar-item active" onclick="switchTab('shop')"><i class="fa-solid fa-store"></i> Shop & Discover</div>
                 <div class="sidebar-item" onclick="switchTab('rides')"><i class="fa-solid fa-car"></i> Mobility & Rides</div>
                 <div class="sidebar-item" onclick="switchTab('services')"><i class="fa-solid fa-screwdriver-wrench"></i> Local Services</div>
-                <div class="sidebar-item" onclick="switchTab('jobs')"><i class="fa-solid fa-user-tie"></i> Hyperlocal Jobs</div>
+                <div class="sidebar-item" onclick="switchTab('jobs')"><i class="fa-solid fa-briefcase"></i> Jobs</div>
+                <div class="sidebar-item" onclick="switchTab('cart')"><i class="fa-solid fa-cart-shopping"></i> My Cart</div>
+                <div class="sidebar-item" onclick="switchTab('settings')"><i class="fa-solid fa-gear"></i> Settings</div>
             </div>
-            <!-- Sidebar for Business View -->
-            <div id="desktop-nav-business" style="display: none; margin-top: 20px;">
-                <div style="padding: 0 25px 10px; font-size: 0.75rem; color: var(--accent); text-transform: uppercase; font-weight: 700; letter-spacing: 1px;">Merchant Tools</div>
-                <div class="sidebar-item active" onclick="switchTab('dashboard')"><i class="fa-solid fa-chart-line"></i> Dashboard & Sales</div>
+            
+            <div id="desktop-nav-business" style="display: none; margin-top: 10px;">
+                <div style="padding: 0 25px 10px; font-size: 0.75rem; color: var(--accent); text-transform: uppercase; font-weight: 700;">Merchant Tools</div>
+                <div class="sidebar-item active" onclick="switchTab('dashboard')"><i class="fa-solid fa-chart-line"></i> Dashboard</div>
                 <div class="sidebar-item" onclick="showToast('Inventory Manager Opening...')"><i class="fa-solid fa-box"></i> Inventory</div>
-                <div class="sidebar-item" onclick="showToast('Job Postings Opening...')"><i class="fa-solid fa-users"></i> Manage Hiring</div>
+                <div class="sidebar-item" onclick="showToast('Website Builder Opening...')"><i class="fa-solid fa-globe"></i> Manage Website</div>
+                <div class="sidebar-item" onclick="switchTab('settings')"><i class="fa-solid fa-gear"></i> Business Settings</div>
             </div>
         </div>
 
@@ -185,150 +176,241 @@
             <!-- HEADER -->
             <header>
                 <div class="header-actions">
-                    <div class="mobile-logo">Near<span>Byt</span></div>
-                    
-                    <div style="display: flex; gap: 15px; align-items: center; margin-left: auto;">
-                        <!-- ROLE TOGGLE SETTINGS BUTTON -->
+                    <div class="mobile-logo" onclick="secretToggle()">Near<span>Byt</span></div>
+                    <div style="display: flex; gap: 15px; align-items: center;">
+                        <div class="points-pill" onclick="showToast('You have 450 NearByt Coins!')">
+                            <i class="fa-solid fa-coins"></i> <span data-edit-id="pts-bal">450</span>
+                        </div>
                         <button id="role-btn" class="role-switch-btn" onclick="toggleRole()">
-                            <i class="fa-solid fa-user-gear"></i> <span id="role-text">Switch to Business</span>
+                            <i class="fa-solid fa-user-gear"></i> <span id="role-text">Business View</span>
                         </button>
-                        
-                        <i class="fa-solid fa-qrcode" style="font-size: 1.2rem; cursor: pointer;" onclick="showToast('Scanner opened')"></i>
-                        <i class="fa-solid fa-bag-shopping" style="font-size: 1.2rem; cursor: pointer;" onclick="showToast('Cart is empty')"></i>
+                        <i class="fa-solid fa-bag-shopping" style="font-size: 1.3rem; cursor: pointer; padding-left: 5px;" onclick="switchTab('cart')"></i>
                     </div>
                 </div>
             </header>
 
-            <!-- SCROLLABLE CONTENT AREA -->
             <div id="content-area">
-
-                <!-- ==========================================
-                     CUSTOMER VIEWS
-                     ========================================== -->
-
-                <!-- TAB 1: SHOP & DROPSHIP -->
+                
+                <!-- TAB 1: SHOP & DISCOVER -->
                 <div id="view-shop" class="view-section active customer-view">
+                    
                     <div class="search-bar">
                         <i class="fa-solid fa-magnifying-glass" style="color: var(--text-gray);"></i>
-                        <input type="text" placeholder="Search local stores, dropship deals, or items...">
+                        <input type="text" placeholder="Search local stores, food, hardware, clothes...">
+                    </div>
+
+                    <!-- Categories Scroll -->
+                    <div class="scroll-row" style="margin-bottom: 20px;">
+                        <button class="filter-btn active">All</button>
+                        <button class="filter-btn"><i class="fa-solid fa-basket-shopping"></i> Groceries</button>
+                        <button class="filter-btn"><i class="fa-solid fa-utensils"></i> Restaurants</button>
+                        <button class="filter-btn"><i class="fa-solid fa-hammer"></i> Hardware</button>
+                        <button class="filter-btn"><i class="fa-solid fa-shirt"></i> Fashion</button>
+                        <button class="filter-btn"><i class="fa-solid fa-box-open"></i> Dropship</button>
+                    </div>
+
+                    <!-- NEW: Trending Products Horizontal Scroll -->
+                    <h2 class="section-title" style="margin-top: 10px;">Trending Products Nearby</h2>
+                    <div class="scroll-row">
+                        <div class="product-card">
+                            <img src="https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=150&q=80" alt="Milk" class="product-img" data-edit-id="prod1-img">
+                            <h4 style="font-size: 0.9rem;" data-edit-id="prod1-title">Fresh Milk 1L</h4>
+                            <p style="font-size: 0.95rem; font-weight: 700; color: var(--primary);" data-edit-id="prod1-price">₹65</p>
+                            <p style="font-size: 0.7rem; color: var(--text-gray); margin-top: 5px;" data-edit-id="prod1-shop"><i class="fa-solid fa-store"></i> Reddy's • 0.2km</p>
+                            <button class="btn btn-accent" style="width: 100%; padding: 6px; font-size: 0.75rem; margin-top: 8px;" onclick="showToast('Added to Cart!')">Add</button>
+                        </div>
+                        <div class="product-card">
+                            <img src="https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&w=150&q=80" alt="Mouse" class="product-img" data-edit-id="prod2-img">
+                            <h4 style="font-size: 0.9rem;" data-edit-id="prod2-title">Wireless Mouse</h4>
+                            <p style="font-size: 0.95rem; font-weight: 700; color: var(--primary);" data-edit-id="prod2-price">₹499</p>
+                            <p style="font-size: 0.7rem; color: var(--text-gray); margin-top: 5px;" data-edit-id="prod2-shop"><i class="fa-solid fa-store"></i> Elite Tech • 1.1km</p>
+                            <button class="btn btn-accent" style="width: 100%; padding: 6px; font-size: 0.75rem; margin-top: 8px;" onclick="showToast('Added to Cart!')">Add</button>
+                        </div>
+                        <div class="product-card">
+                            <img src="https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&w=150&q=80" alt="Shirt" class="product-img" data-edit-id="prod3-img">
+                            <h4 style="font-size: 0.9rem;" data-edit-id="prod3-title">Cotton T-Shirt</h4>
+                            <p style="font-size: 0.95rem; font-weight: 700; color: var(--primary);" data-edit-id="prod3-price">₹350</p>
+                            <p style="font-size: 0.7rem; color: var(--text-gray); margin-top: 5px;" data-edit-id="prod3-shop"><i class="fa-solid fa-store"></i> Aura Fashion • 1.2km</p>
+                            <button class="btn btn-accent" style="width: 100%; padding: 6px; font-size: 0.75rem; margin-top: 8px;" onclick="showToast('Added to Cart!')">Add</button>
+                        </div>
+                    </div>
+
+                    <!-- NEW: Restaurants Section -->
+                    <h2 class="section-title">Restaurants & Dining</h2>
+                    <div class="grid-layout">
+                        <div class="card">
+                            <div class="card-image-wrap">
+                                <img src="https://images.unsplash.com/photo-1631515243349-e0cb75fb8d3a?auto=format&fit=crop&w=150&q=80" alt="Biryani" class="shop-logo" data-edit-id="rest1-img">
+                                <div style="flex:1;">
+                                    <span class="tag tag-accent">Delivery + Dine-in</span>
+                                    <h3 style="font-size: 1.1rem; margin-bottom: 2px;" data-edit-id="rest1-title">Paradise Biryani House</h3>
+                                    <p style="font-size: 0.8rem; color: var(--text-gray);" data-edit-id="rest1-desc">Indian cuisine • 0.8 km away • ★ 4.8</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 10px; width: 100%;">
+                                <button class="btn" style="flex: 1;" onclick="switchTab('cart'); showToast('Opening Menu...')">View Menu</button>
+                                <button class="btn btn-outline" style="flex: 1;"><i class="fa-solid fa-map-location-dot"></i> Directions</button>
+                            </div>
+                        </div>
                     </div>
 
                     <h2 class="section-title">Neighborhood Stores</h2>
                     <div class="grid-layout">
-                        <!-- Shop Card 1 -->
                         <div class="card">
                             <div class="card-image-wrap">
-                                <img src="https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=150&q=80" alt="Grocery" class="shop-logo">
-                                <div>
-                                    <span class="tag tag-accent">Express Pickup</span>
-                                    <h3 style="font-size: 1.1rem; margin-bottom: 2px;">Reddy's Supermart</h3>
-                                    <p style="font-size: 0.8rem; color: var(--text-gray);">Groceries • 0.2 km away • ★ 4.9</p>
-                                </div>
-                            </div>
-                            <button class="btn" style="margin-top: 15px;" onclick="showToast('Opening store catalog...')">Shop Local Stock</button>
-                        </div>
-                        <!-- Shop Card 2 -->
-                        <div class="card">
-                            <div class="card-image-wrap">
-                                <img src="https://images.unsplash.com/photo-1556740738-b6a63e27c4df?auto=format&fit=crop&w=150&q=80" alt="Tech" class="shop-logo">
-                                <div>
+                                <img src="https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=150&q=80" alt="Grocery" class="shop-logo" data-edit-id="shop1-img">
+                                <div style="flex:1;">
                                     <span class="tag tag-navy">Live Inventory</span>
-                                    <h3 style="font-size: 1.1rem; margin-bottom: 2px;">Elite Electronics</h3>
-                                    <p style="font-size: 0.8rem; color: var(--text-gray);">Mobiles & Accessories • 1.1 km away</p>
+                                    <h3 style="font-size: 1.1rem; margin-bottom: 2px;" data-edit-id="shop1-title">Reddy's Supermart</h3>
+                                    <p style="font-size: 0.8rem; color: var(--text-gray);" data-edit-id="shop1-desc">Groceries • 0.2 km away • ★ 4.9</p>
                                 </div>
                             </div>
-                            <button class="btn" style="margin-top: 15px;" onclick="showToast('Opening store catalog...')">Shop Local Stock</button>
+                            <div style="display: flex; gap: 10px; width: 100%;">
+                                <button class="btn" style="flex: 1;">Shop App</button>
+                                <button class="btn btn-outline" style="flex: 1;">View Website</button>
+                            </div>
                         </div>
-                    </div>
-
-                    <h2 class="section-title">Trending Dropship Deals (Zero-Inventory)</h2>
-                    <div class="grid-layout">
-                        <!-- Dropship Card -->
                         <div class="card">
                             <div class="card-image-wrap">
-                                <img src="https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?auto=format&fit=crop&w=150&q=80" alt="Earbuds" class="dropship-img">
-                                <div>
-                                    <span class="tag tag-navy">Direct from Supplier</span>
-                                    <h4 style="font-size: 1.1rem;">Aura Wireless Earbuds Pro</h4>
-                                    <p style="font-size: 0.8rem; color: var(--text-gray); margin-bottom: 5px;">Sold by: TechNova Regional Hub</p>
-                                    <p style="font-weight: 700; color: var(--accent-dark); font-size: 1.1rem;">₹899 <s style="color: #999; font-size: 0.85rem; font-weight: normal;">₹1499</s></p>
+                                <img src="https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?auto=format&fit=crop&w=150&q=80" alt="Hardware" class="shop-logo" data-edit-id="shop2-img">
+                                <div style="flex:1;">
+                                    <span class="tag tag-navy">Live Inventory</span>
+                                    <h3 style="font-size: 1.1rem; margin-bottom: 2px;" data-edit-id="shop2-title">Sri Ram Hardware</h3>
+                                    <p style="font-size: 0.8rem; color: var(--text-gray);" data-edit-id="shop2-desc">Tools & Paint • 0.5 km away</p>
                                 </div>
                             </div>
-                            <button class="btn btn-accent" style="margin-top: 15px;" onclick="showToast('Added to cart via dropship!')">Buy Now</button>
+                            <div style="display: flex; gap: 10px; width: 100%;">
+                                <button class="btn" style="flex: 1;">Shop App</button>
+                                <button class="btn btn-outline" style="flex: 1;">View Website</button>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- TAB 2: MOBILITY / RIDES -->
                 <div id="view-rides" class="view-section customer-view">
-                    <div class="search-bar" style="margin-bottom: 10px;">
+                    
+                    <!-- NEW: Active Ride Tracking -->
+                    <div class="tracking-card">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <p style="font-size: 0.75rem; font-weight: 700; color: var(--accent-dark); letter-spacing: 0.5px;">ACTIVE RIDE</p>
+                                <h4 style="color: var(--primary); font-size: 1.1rem; margin-top: 2px;" data-edit-id="ride-track-title">Your Auto is arriving</h4>
+                                <p style="font-size: 0.85rem; color: var(--text-gray);" data-edit-id="ride-track-desc">TS 09 AB 1234 • Reaching in 3 mins</p>
+                            </div>
+                            <div style="background: white; border-radius: 50%; padding: 10px; border: 1px solid var(--border);">
+                                <i class="fa-solid fa-phone" style="color: var(--primary);"></i>
+                            </div>
+                        </div>
+                        <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 75%;"></div></div>
+                    </div>
+
+                    <div class="search-bar" style="margin-bottom: 10px; background: white;">
                         <i class="fa-solid fa-circle-dot" style="color: var(--accent-dark);"></i>
                         <input type="text" value="Current Location: Jubilee Hills" readonly>
                     </div>
                     <div class="search-bar">
                         <i class="fa-solid fa-location-dot" style="color: #FF3B30;"></i>
-                        <input type="text" placeholder="Where do you want to go?" style="font-weight: 600;">
+                        <input type="text" placeholder="Where do you want to go?">
                     </div>
 
                     <h2 class="section-title">Available Rides</h2>
-                    <div class="grid-layout" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
-                        
-                        <!-- Bike -->
-                        <div class="ride-option" onclick="selectRide(this, 'Bike Taxi')">
+                    <div class="grid-layout">
+                        <!-- Auto -->
+                        <div class="ride-option selected" onclick="selectRide(this)">
                             <div style="display: flex; align-items: center; gap: 15px;">
-                                <div class="ride-icon-box"><i class="fa-solid fa-motorcycle"></i></div>
-                                <div>
-                                    <h4 style="font-size: 1.1rem;">Bike Taxi</h4>
-                                    <p style="font-size: 0.8rem; color: var(--text-gray);">2 mins away • 1 seat</p>
-                                </div>
-                            </div>
-                            <h3 style="margin: 0; color: var(--primary);">₹45</h3>
-                        </div>
-
-                        <!-- Auto Rickshaw (Custom SVG Icon) -->
-                        <div class="ride-option selected" onclick="selectRide(this, 'Auto Rickshaw')">
-                            <div style="display: flex; align-items: center; gap: 15px;">
-                                <div class="ride-icon-box">
+                                <div class="ride-icon-box" style="padding-top: 5px;">
                                     <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
-                                        <path d="M5 16h14a2 2 0 0 0 2-2v-4l-3-3H6L3 10v4a2 2 0 0 0 2 2z"></path>
-                                        <circle cx="7" cy="18" r="2.5"></circle>
-                                        <circle cx="17" cy="18" r="2.5"></circle>
-                                        <path d="M6 7v3h12V7z" fill="none" stroke="currentColor" stroke-width="2"></path>
+                                        <path d="M5.5 16h13a2 2 0 0 0 2-2v-3.5L17 5H7L3.5 10.5V14a2 2 0 0 0 2 2zM7.5 6.5h9l2 3H5.5l2-3z"></path>
+                                        <circle cx="7" cy="17.5" r="2.5"></circle>
+                                        <circle cx="17" cy="17.5" r="2.5"></circle>
                                     </svg>
                                 </div>
                                 <div>
-                                    <h4 style="font-size: 1.1rem;">Auto Rickshaw</h4>
+                                    <h4 style="font-size: 1.1rem;">Auto</h4>
                                     <p style="font-size: 0.8rem; color: var(--text-gray);">4 mins away • 3 seats</p>
                                 </div>
                             </div>
-                            <h3 style="margin: 0; color: var(--primary);">₹80</h3>
+                            <h3 style="margin: 0; color: var(--primary);" data-edit-id="price-auto">₹80</h3>
                         </div>
-
-                        <!-- Cab / Car -->
-                        <div class="ride-option" onclick="selectRide(this, 'Cab / Car')">
+                        <!-- Bike -->
+                        <div class="ride-option" onclick="selectRide(this)">
                             <div style="display: flex; align-items: center; gap: 15px;">
-                                <div class="ride-icon-box"><i class="fa-solid fa-car-side"></i></div>
+                                <div class="ride-icon-box"><i class="fa-solid fa-motorcycle"></i></div>
                                 <div>
-                                    <h4 style="font-size: 1.1rem;">Cab (Mini)</h4>
-                                    <p style="font-size: 0.8rem; color: var(--text-gray);">6 mins away • 4 seats • AC</p>
+                                    <h4 style="font-size: 1.1rem;">Bike</h4>
+                                    <p style="font-size: 0.8rem; color: var(--text-gray);">2 mins away • 1 seat</p>
                                 </div>
                             </div>
-                            <h3 style="margin: 0; color: var(--primary);">₹150</h3>
+                            <h3 style="margin: 0; color: var(--primary);" data-edit-id="price-bike">₹45</h3>
+                        </div>
+                        <!-- Cab -->
+                        <div class="ride-option" onclick="selectRide(this)">
+                            <div style="display: flex; align-items: center; gap: 15px;">
+                                <div class="ride-icon-box"><i class="fa-solid fa-car"></i></div>
+                                <div>
+                                    <h4 style="font-size: 1.1rem;">Cab</h4>
+                                    <p style="font-size: 0.8rem; color: var(--text-gray);">6 mins away • 4 seats</p>
+                                </div>
+                            </div>
+                            <h3 style="margin: 0; color: var(--primary);" data-edit-id="price-cab">₹150</h3>
                         </div>
                     </div>
-
-                    <button class="btn btn-accent" style="margin-top: 20px; font-size: 1.1rem; padding: 15px;" onclick="showToast('Searching for nearby drivers...')">Book Selected Ride</button>
+                    <button class="btn btn-accent" style="margin-top: 20px; width: 100%; padding: 14px; font-size: 1.05rem;">Book Selected Ride</button>
                 </div>
 
                 <!-- TAB 3: SERVICES -->
                 <div id="view-services" class="view-section customer-view">
-                    <h2 class="section-title">Local Repairs & Mechanics</h2>
+                    
+                    <!-- ENHANCED: Active Service Tracking -->
+                    <div class="tracking-card">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <p style="font-size: 0.75rem; font-weight: 700; color: var(--accent-dark); letter-spacing: 0.5px;">ACTIVE BOOKING</p>
+                                <h4 style="color: var(--primary); font-size: 1.1rem; margin-top: 2px;" data-edit-id="active-service-title">AC Repair - In Progress</h4>
+                                <p style="font-size: 0.85rem; color: var(--text-gray);" data-edit-id="active-service-desc">Technician is en route • 1.2 km away</p>
+                            </div>
+                            <i class="fa-solid fa-location-crosshairs" style="color: var(--primary); font-size: 1.5rem; margin-top: 5px;"></i>
+                        </div>
+                        <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 40%;"></div></div>
+                    </div>
+
+                    <div class="scroll-row">
+                        <button class="filter-btn active">All</button>
+                        <button class="filter-btn">Bike Service</button>
+                        <button class="filter-btn">AC Repair</button>
+                        <button class="filter-btn">Plumber</button>
+                    </div>
+
+                    <h2 class="section-title">Verified Local Services</h2>
                     <div class="grid-layout">
+                        <!-- Bike Mechanic -->
                         <div class="card">
-                            <span class="tag tag-accent">Live Tracked Service</span>
-                            <h3 style="margin-top: 8px;">Rao's Bike Servicing</h3>
-                            <p style="font-size: 0.85rem; color: var(--text-gray); margin-bottom: 15px;">Drop off your bike or request pickup. Track repair stages live on the app.</p>
-                            <button class="btn" onclick="showToast('Booking service slot...')">Book Slot</button>
+                            <div class="card-image-wrap">
+                                <img src="https://images.unsplash.com/photo-1623910397576-9d6e8a49c4f4?auto=format&fit=crop&w=150&q=80" alt="Mechanic" class="shop-logo" data-edit-id="srv1-img">
+                                <div style="flex:1;">
+                                    <span class="tag tag-accent">Live Tracked Service</span>
+                                    <h3 style="font-size: 1.1rem; margin-bottom: 2px;" data-edit-id="srv1-title">Rao's Bike Care</h3>
+                                    <p style="font-size: 0.85rem; color: var(--text-gray);" data-edit-id="srv1-desc">Garage • 1.2 km away</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 10px; width: 100%;">
+                                <button class="btn btn-outline" style="flex: 1;"><i class="fa-solid fa-phone"></i> Call</button>
+                                <button class="btn" style="flex: 2;">Book Drop-off</button>
+                            </div>
+                        </div>
+
+                        <!-- AC Repair -->
+                        <div class="card">
+                            <div class="card-image-wrap">
+                                <img src="https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&w=150&q=80" alt="AC" class="shop-logo" data-edit-id="srv2-img">
+                                <div style="flex:1;">
+                                    <span class="tag tag-navy">At-Home Service</span>
+                                    <h3 style="font-size: 1.1rem; margin-bottom: 2px;" data-edit-id="srv2-title">Urban Cool Techs</h3>
+                                    <p style="font-size: 0.85rem; color: var(--text-gray);" data-edit-id="srv2-desc">Appliance Repair • ★ 4.7</p>
+                                </div>
+                            </div>
+                            <button class="btn" style="width: 100%;">Book Home Visit</button>
                         </div>
                     </div>
                 </div>
@@ -339,175 +421,276 @@
                     <div class="grid-layout">
                         <div class="card">
                             <div class="card-image-wrap" style="margin-bottom: 10px;">
-                                <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=150&q=80" alt="Job" class="shop-logo">
+                                <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=150&q=80" alt="Job" class="shop-logo" data-edit-id="job1-img">
                                 <div>
-                                    <h3 style="color: var(--primary);">Store Manager</h3>
-                                    <p style="font-weight: 600; margin: 3px 0; font-size: 0.9rem;">Reddy's Supermart</p>
-                                    <span class="tag tag-navy">Full Time</span>
+                                    <h3 style="color: var(--primary);" data-edit-id="job1-title">Store Manager</h3>
+                                    <p style="font-weight: 600; margin: 3px 0; font-size: 0.9rem;" data-edit-id="job1-desc">Reddy's Supermart</p>
                                 </div>
                             </div>
-                            <p style="font-size: 0.85rem; color: var(--text-gray);"><i class="fa-solid fa-location-dot"></i> 0.2 km away &nbsp;•&nbsp; <i class="fa-solid fa-indian-rupee-sign"></i> 18,000/mo</p>
-                            <button class="btn btn-accent" style="margin-top: 15px;" onclick="showToast('Application Profile sent instantly!')">1-Tap Apply</button>
-                        </div>
-                        
-                        <div class="card">
-                            <div class="card-image-wrap" style="margin-bottom: 10px;">
-                                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=150&q=80" alt="Job" class="shop-logo">
-                                <div>
-                                    <h3 style="color: var(--primary);">Delivery Partner</h3>
-                                    <p style="font-weight: 600; margin: 3px 0; font-size: 0.9rem;">NearByt Fleet</p>
-                                    <span class="tag tag-accent">Flexible Shift</span>
-                                </div>
-                            </div>
-                            <p style="font-size: 0.85rem; color: var(--text-gray);"><i class="fa-solid fa-motorcycle"></i> City-wide &nbsp;•&nbsp; <i class="fa-solid fa-indian-rupee-sign"></i> Per Order Earnings</p>
-                            <button class="btn btn-accent" style="margin-top: 15px;" onclick="showToast('Onboarding process started!')">1-Tap Apply</button>
+                            <p style="font-size: 0.85rem; color: var(--text-gray);" data-edit-id="job1-meta"><i class="fa-solid fa-location-dot"></i> 0.2 km away &nbsp;•&nbsp; ₹ 18,000/mo</p>
+                            <button class="btn btn-accent" style="margin-top: 15px; width: 100%;">Apply for Job</button>
                         </div>
                     </div>
                 </div>
 
+                <!-- NEW TAB: CART -->
+                <div id="view-cart" class="view-section customer-view">
+                    <h2 class="section-title" style="margin-top: 5px;"><i class="fa-solid fa-cart-shopping"></i> My Cart</h2>
+                    
+                    <div class="card" style="margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; gap: 15px; align-items: center;">
+                            <img src="https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=80&q=80" style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover;">
+                            <div>
+                                <h4 style="font-size: 1rem; color: var(--primary);">Fresh Milk 1L</h4>
+                                <p style="font-size: 0.8rem; color: var(--text-gray);">Reddy's Supermart</p>
+                                <p style="font-weight: 700; margin-top: 3px;">₹65</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px; background: var(--bg-color); padding: 5px 10px; border-radius: 8px;">
+                            <i class="fa-solid fa-minus" style="font-size: 0.8rem; cursor: pointer;"></i>
+                            <span style="font-weight: 700;">1</span>
+                            <i class="fa-solid fa-plus" style="font-size: 0.8rem; cursor: pointer;"></i>
+                        </div>
+                    </div>
+
+                    <div class="card" style="background: #F8FAFC; border: 2px dashed var(--border);">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.9rem;">
+                            <span>Subtotal</span><span>₹65</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.9rem;">
+                            <span>Delivery Fee</span><span>₹15</span>
+                        </div>
+                        <hr style="border: 0; border-top: 1px solid var(--border); margin: 10px 0;">
+                        <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 1.1rem; color: var(--primary);">
+                            <span>Total</span><span>₹80</span>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-accent" style="width: 100%; padding: 14px; font-size: 1.05rem; margin-top: 20px;" onclick="showToast('Proceeding to Checkout...')">Checkout via UPI / Card</button>
+                </div>
+
+                <!-- TAB 5: SETTINGS -->
+                <div id="view-settings" class="view-section">
+                    
+                    <h2 class="section-title" style="margin-top: 0;">My Account</h2>
+                    <div class="settings-list">
+                        <div class="settings-item">
+                            <div style="display: flex; align-items: center; gap: 15px;">
+                                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80" style="width: 50px; height: 50px; border-radius: 50%;">
+                                <div>
+                                    <h4 style="font-size: 1.1rem; color: var(--primary);" data-edit-id="user-name">Rahul Sharma</h4>
+                                    <p style="font-size: 0.85rem; color: var(--text-gray);">+91 98765 43210</p>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-chevron-right" style="color:#ccc;"></i>
+                        </div>
+                        <!-- NEW: Points in settings -->
+                        <div class="settings-item">
+                            <div><i class="fa-solid fa-gift settings-icon" style="color: #F59E0B;"></i> NearByt Rewards & Points</div>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="font-weight: 700; color: var(--primary);" data-edit-id="pts-bal-set">450 Coins</span>
+                                <i class="fa-solid fa-chevron-right" style="color:#ccc;"></i>
+                            </div>
+                        </div>
+                        <div class="settings-item">
+                            <div><i class="fa-solid fa-credit-card settings-icon"></i> Payment Methods & UPI</div>
+                            <i class="fa-solid fa-chevron-right" style="color:#ccc;"></i>
+                        </div>
+                    </div>
+
+                    <h2 class="section-title">Business & Support</h2>
+                    <div class="settings-list">
+                        <!-- NEW: Create Business Account -->
+                        <div class="settings-item" onclick="showToast('Opening Business Registration...')">
+                            <div><i class="fa-solid fa-shop-lock settings-icon" style="color: var(--accent-dark);"></i> Create a Business Account</div>
+                            <i class="fa-solid fa-chevron-right" style="color:#ccc;"></i>
+                        </div>
+                        <div class="settings-item">
+                            <div><i class="fa-solid fa-headset settings-icon"></i> 24/7 Customer Care</div>
+                            <i class="fa-solid fa-chevron-right" style="color:#ccc;"></i>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-outline" style="width: 100%; border-color: #ef4444; color: #ef4444; font-size: 1rem; padding: 14px;">Log Out</button>
+                </div>
+
                 <!-- ==========================================
-                     BUSINESS OWNER VIEW (Hidden by default)
+                     BUSINESS OWNER VIEW (Dashboard)
                      ========================================== -->
                 <div id="view-dashboard" class="view-section business-view">
-                    
-                    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px;">
-                        <div>
-                            <h2 style="font-size: 1.5rem; color: var(--primary);">Merchant Dashboard</h2>
-                            <p style="color: var(--text-gray);">Reddy's Supermart • Online</p>
-                        </div>
-                        <span class="tag tag-accent">Live Storefront</span>
+                    <div style="margin-bottom: 25px;">
+                        <p style="font-size: 0.8rem; color: var(--text-gray); margin-bottom: 5px; text-transform: uppercase; font-weight: 700;">Managing Store:</p>
+                        <select style="padding: 10px 14px; border-radius: 10px; font-weight: 600; font-size: 0.95rem; width: 100%; max-width: 400px; border: 1px solid var(--border); box-shadow: 0 2px 5px rgba(0,0,0,0.02);" data-edit-id="dash-dropdown">
+                            <option>Reddy's Supermart</option>
+                            <option>+ Add New Business</option>
+                        </select>
                     </div>
 
-                    <!-- Analytics Grid -->
-                    <div class="stat-grid">
-                        <div class="stat-card">
-                            <p style="color: var(--text-gray); font-size: 0.85rem; font-weight: 600;">Today's Sales</p>
-                            <div class="stat-num">₹12,450</div>
-                            <p style="color: #00CC6A; font-size: 0.75rem;"><i class="fa-solid fa-arrow-trend-up"></i> +14% vs yesterday</p>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px;">
+                        <div class="card" style="text-align: center;">
+                            <p style="color: var(--text-gray); font-size: 0.85rem; font-weight: 600; text-transform: uppercase;">Today's Sales</p>
+                            <div style="font-size: 1.8rem; font-weight: 700; color: var(--primary); margin-top: 5px;" data-edit-id="dash-sales">₹12,450</div>
                         </div>
-                        <div class="stat-card">
-                            <p style="color: var(--text-gray); font-size: 0.85rem; font-weight: 600;">Express Pickups</p>
-                            <div class="stat-num">24</div>
-                            <p style="color: var(--text-gray); font-size: 0.75rem;">Orders packed & waiting</p>
-                        </div>
-                        <div class="stat-card">
-                            <p style="color: var(--text-gray); font-size: 0.85rem; font-weight: 600;">Dropship Margins</p>
-                            <div class="stat-num">₹1,800</div>
-                            <p style="color: var(--text-gray); font-size: 0.75rem;">From catalog items</p>
-                        </div>
-                        <div class="stat-card">
-                            <p style="color: var(--text-gray); font-size: 0.85rem; font-weight: 600;">Job Applicants</p>
-                            <div class="stat-num">3</div>
-                            <p style="color: var(--text-gray); font-size: 0.75rem;">For Store Manager role</p>
+                        <div class="card" style="text-align: center;">
+                            <p style="color: var(--text-gray); font-size: 0.85rem; font-weight: 600; text-transform: uppercase;">Pending Pickups</p>
+                            <div style="font-size: 1.8rem; font-weight: 700; color: var(--primary); margin-top: 5px;" data-edit-id="dash-orders">24</div>
                         </div>
                     </div>
 
-                    <h2 class="section-title">Quick Actions to Drive Sales</h2>
-                    <div class="grid-layout">
-                        
-                        <!-- Upload Product UI -->
-                        <div class="card upload-area" onclick="showToast('Opening Camera / File Explorer...')">
-                            <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 10px;"></i>
-                            <h3 style="font-size: 1.1rem; color: var(--primary);">Upload New Product</h3>
-                            <p style="font-size: 0.85rem; color: var(--text-gray); margin-top: 5px;">Take a photo to list an item in your store instantly.</p>
+                    <div class="grid-layout" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); text-align: center;">
+                        <div class="card" style="background:#F8FAFC; border:2px dashed #CBD5E1; cursor: pointer; padding: 25px;">
+                            <i class="fa-solid fa-globe" style="font-size: 2rem; color: var(--primary);"></i>
+                            <h3 style="font-size: 1rem; margin-top: 12px; color: var(--primary);">Edit Website</h3>
                         </div>
-
-                        <!-- Post Job UI -->
-                        <div class="card upload-area" onclick="showToast('Opening Job Form...')">
-                            <i class="fa-solid fa-user-plus" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 10px;"></i>
-                            <h3 style="font-size: 1.1rem; color: var(--primary);">Post a Local Job</h3>
-                            <p style="font-size: 0.85rem; color: var(--text-gray); margin-top: 5px;">Hire cashiers, mechanics, or delivery staff nearby.</p>
+                        <div class="card" style="background:#F8FAFC; border:2px dashed #CBD5E1; cursor: pointer; padding: 25px;">
+                            <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2rem; color: var(--primary);"></i>
+                            <h3 style="font-size: 1rem; margin-top: 12px; color: var(--primary);">Upload Item</h3>
                         </div>
-                        
                     </div>
-
-                    <h2 class="section-title" style="margin-top: 30px;">Active Live Orders (Needs Packing)</h2>
-                    <div class="card" style="display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--accent-dark);">
-                        <div>
-                            <h4 style="font-size: 1.1rem; color: var(--primary);">Order #1042 - Express Pickup</h4>
-                            <p style="font-size: 0.85rem; color: var(--text-gray); margin-top: 3px;">2x Milk, 1x Bread • Paid via UPI</p>
-                        </div>
-                        <button class="btn btn-accent" style="width: auto;" onclick="showToast('Customer notified to pick up!')">Mark Packed</button>
-                    </div>
-
                 </div>
 
             </div> <!-- End Content Area -->
 
-            <!-- BOTTOM NAVIGATION (MOBILE CUSTOMER VIEW ONLY) -->
+            <!-- BOTTOM NAVIGATION (MOBILE) -->
             <div id="bottom-nav">
                 <div class="nav-item active" data-target="shop" onclick="switchTab('shop')">
                     <i class="fa-solid fa-store"></i><span>Shop</span>
                 </div>
                 <div class="nav-item" data-target="rides" onclick="switchTab('rides')">
-                    <i class="fa-solid fa-car-side"></i><span>Rides</span>
+                    <i class="fa-solid fa-car"></i><span>Rides</span>
                 </div>
                 <div class="nav-item" data-target="services" onclick="switchTab('services')">
                     <i class="fa-solid fa-screwdriver-wrench"></i><span>Services</span>
                 </div>
-                <div class="nav-item" data-target="jobs" onclick="switchTab('jobs')">
-                    <i class="fa-solid fa-user-tie"></i><span>Jobs</span>
+                <div class="nav-item" data-target="settings" onclick="switchTab('settings')">
+                    <i class="fa-solid fa-gear"></i><span>Settings</span>
                 </div>
             </div>
+        </div>
 
-        </div> <!-- End Main Container -->
-
-        <!-- TOAST NOTIFICATION POPUP -->
+        <!-- TOAST POPUP -->
         <div id="toast">Message here</div>
-
     </div>
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
+        // --- 1. LOCAL STORAGE & DATA LOADING ---
+        window.onload = () => {
+            document.querySelectorAll('[data-edit-id]').forEach(el => {
+                const savedData = localStorage.getItem(el.getAttribute('data-edit-id'));
+                if (savedData) {
+                    if (el.tagName === 'IMG') el.src = savedData;
+                    else if (el.tagName === 'INPUT' || el.tagName === 'SELECT') el.value = savedData;
+                    else el.innerHTML = savedData;
+                }
+            });
+            window.dispatchEvent(new Event('resize'));
+        };
+
+        // --- 2. SECRET EDIT MODE LOGIC ---
+        let tapCount = 0;
+        let tapTimeout;
+        
+        function secretToggle() {
+            tapCount++;
+            clearTimeout(tapTimeout);
+            
+            if (tapCount >= 5) {
+                document.body.classList.toggle('edit-mode');
+                const isEdit = document.body.classList.contains('edit-mode');
+                showToast(isEdit ? 'Live Edit Mode ENABLED' : 'Live Edit Mode DISABLED');
+                
+                document.querySelectorAll('[data-edit-id]').forEach(el => {
+                    if (el.tagName !== 'IMG' && el.tagName !== 'SELECT') {
+                        el.contentEditable = isEdit;
+                    }
+                });
+                tapCount = 0;
+            }
+            
+            tapTimeout = setTimeout(() => { tapCount = 0; }, 2000);
+        }
+
+        // --- 3. AUTO-SAVE TEXT CHANGES ---
+        document.addEventListener('input', (e) => {
+            if (e.target.hasAttribute('data-edit-id')) {
+                const val = e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' ? e.target.value : e.target.innerHTML;
+                localStorage.setItem(e.target.getAttribute('data-edit-id'), val);
+            }
+        });
+
+        // --- 4. IMAGE UPLOAD LOGIC ---
+        let currentImageEl = null;
+        
+        document.addEventListener('click', (e) => {
+            if (document.body.classList.contains('edit-mode') && e.target.tagName === 'IMG' && e.target.hasAttribute('data-edit-id')) {
+                currentImageEl = e.target;
+                document.getElementById('imageUploader').click();
+            }
+        });
+
+        document.getElementById('imageUploader').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file && currentImageEl) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const img = new Image();
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        const MAX_WIDTH = 400;
+                        const scaleSize = MAX_WIDTH / img.width;
+                        canvas.width = MAX_WIDTH;
+                        canvas.height = img.height * scaleSize;
+                        
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        
+                        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.8);
+                        currentImageEl.src = compressedBase64;
+                        localStorage.setItem(currentImageEl.getAttribute('data-edit-id'), compressedBase64);
+                        showToast('Image saved locally!');
+                    }
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // --- UI NAVIGATION LOGIC ---
         let isBusinessMode = false;
 
-        // Toggle between Customer and Business Owner Views
         function toggleRole() {
             isBusinessMode = !isBusinessMode;
             const roleBtn = document.getElementById('role-btn');
-            const roleText = document.getElementById('role-text');
             const bottomNav = document.getElementById('bottom-nav');
             
-            // Desktop Sidebar Navigation switching
             const navCustomer = document.getElementById('desktop-nav-customer');
             const navBusiness = document.getElementById('desktop-nav-business');
 
             if (isBusinessMode) {
-                // Switch to Business
                 roleBtn.classList.add('business-mode');
-                roleText.innerText = "Switch to Customer";
-                roleBtn.innerHTML = `<i class="fa-solid fa-store"></i> <span id="role-text">View as Customer</span>`;
+                roleBtn.innerHTML = `<i class="fa-solid fa-user"></i> <span id="role-text">Customer View</span>`;
                 
-                // Hide Mobile Bottom Nav
-                bottomNav.style.display = 'none';
-                
-                // Toggle Desktop Sidebar Navs
+                bottomNav.style.display = 'none'; 
                 navCustomer.style.display = 'none';
                 navBusiness.style.display = 'block';
 
                 showToast('Switched to Business Dashboard');
-                switchTab('dashboard'); // Force switch to dashboard view
+                switchTab('dashboard'); 
             } else {
-                // Switch back to Customer
                 roleBtn.classList.remove('business-mode');
-                roleText.innerText = "Switch to Business";
-                roleBtn.innerHTML = `<i class="fa-solid fa-user-gear"></i> <span id="role-text">Switch to Business</span>`;
+                roleBtn.innerHTML = `<i class="fa-solid fa-user-gear"></i> <span id="role-text">Business View</span>`;
                 
-                // Show Mobile Bottom Nav (only if screen is mobile size)
-                if (window.innerWidth < 768) {
-                    bottomNav.style.display = 'flex';
-                }
+                if (window.innerWidth < 768) { bottomNav.style.display = 'flex'; }
                 
-                // Toggle Desktop Sidebar Navs
                 navCustomer.style.display = 'block';
                 navBusiness.style.display = 'none';
 
                 showToast('Switched to Customer View');
-                switchTab('shop'); // Force switch to shop view
+                switchTab('shop'); 
             }
         }
-
-        // Handle Window Resize to fix Mobile Bottom Nav visibility bugs
+        
         window.addEventListener('resize', () => {
             const bottomNav = document.getElementById('bottom-nav');
             if (window.innerWidth >= 768 || isBusinessMode) {
@@ -517,56 +700,37 @@
             }
         });
 
-        // Tab Switching Logic (Handles both Desktop Sidebar & Mobile Bottom Nav)
         function switchTab(tabId) {
-            // 1. Hide all view sections
-            document.querySelectorAll('.view-section').forEach(section => {
-                section.classList.remove('active');
-            });
-            
-            // 2. Remove active class from all nav items (Mobile & Desktop)
-            document.querySelectorAll('.nav-item, .sidebar-item').forEach(item => {
-                item.classList.remove('active');
-            });
+            document.querySelectorAll('.view-section').forEach(section => section.classList.remove('active'));
+            document.querySelectorAll('.nav-item, .sidebar-item').forEach(item => item.classList.remove('active'));
 
-            // 3. Show the selected view
             const selectedView = document.getElementById('view-' + tabId);
             if(selectedView) selectedView.classList.add('active');
             
-            // 4. Highlight the correct nav icons (matching the tabId)
-            // Mobile
             const mobileNav = document.querySelector(`.nav-item[data-target="${tabId}"]`);
             if(mobileNav) mobileNav.classList.add('active');
             
-            // Desktop (crude mapping based on onclick string for prototype)
             document.querySelectorAll('.sidebar-item').forEach(item => {
-                if (item.getAttribute('onclick').includes(tabId)) {
+                if (item.getAttribute('onclick') && item.getAttribute('onclick').includes(tabId)) {
                     item.classList.add('active');
                 }
             });
             
-            // 5. Reset scroll position
             document.getElementById('content-area').scrollTop = 0;
         }
 
-        // Ride Option selection highlighting
-        function selectRide(element, rideName) {
+        function selectRide(element) {
             document.querySelectorAll('.ride-option').forEach(opt => opt.classList.remove('selected'));
             element.classList.add('selected');
-            showToast(rideName + ' selected');
         }
 
-        // Custom Toast Notification function
         let toastTimeout;
         function showToast(message) {
             const toast = document.getElementById('toast');
             toast.innerText = message;
             toast.classList.add('show');
-            
             clearTimeout(toastTimeout);
-            toastTimeout = setTimeout(() => {
-                toast.classList.remove('show');
-            }, 2500);
+            toastTimeout = setTimeout(() => { toast.classList.remove('show'); }, 2500);
         }
     </script>
 </body>
